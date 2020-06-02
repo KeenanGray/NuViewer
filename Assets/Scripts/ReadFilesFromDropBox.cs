@@ -24,6 +24,10 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //   data.AddField("include_deleted", "false");
         //   data.AddField("include_has_explicit_shared_numbers", "false");
         //   data.AddField("include_non_downloadable_files", "true");
+
+        //first download root folder files, xml and .dat - platform independent
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"\"}"));
+
 #if UNITY_IOS || UNITY_EDITOR
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/ios\"}"));
 #elif UNITY_ANDROID
@@ -55,7 +59,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
         {
             Debug.Log(jsn.ToString());
             //if the file is a unity asset bundle, create a button for it
-            if (!jsn["name"].Value.Contains(".dat") && !jsn["name"].Value.Contains(".xml"))
+            if (!jsn["name"].Value.Contains(".dat") && !jsn["name"].Value.Contains(".xml") && jsn[".tag"].Value != "folder")
             {
                 var prefab = Resources.Load("LoadSceneButton") as GameObject;
                 var go = Instantiate(prefab, GameObject.Find("Content").transform);

@@ -50,7 +50,7 @@ public class DatasetLoader : MonoBehaviour
         // This file can be downloaded and the relative path will be used accordingly
 
         string path = "";
-#if UNITY_IPHONE && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
 		path = Application.persistentDataPath + "/"+fileName;
 #elif UNITY_ANDROID && !UNITY_EDITOR
 ///storage/emulated/0/Android/data/com.KeenanGray.VuforiaLoader/files/AR-Games-2020.xml 
@@ -67,7 +67,7 @@ public class DatasetLoader : MonoBehaviour
         }
         else
         {
-            Debug.Log("Dataset Load Failed");
+            Debug.Log("Dataset Load Failed " + path);
         }
     }
 

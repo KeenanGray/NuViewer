@@ -56,10 +56,12 @@ public class AssetBundleDownloader : MonoBehaviour
             savePath = string.Format("{0}{1}", Application.persistentDataPath, SimpleJSON.JSONNode.Parse(path)["path"].Value);
 
             //remove '/ios' or '/android' from path
-#if UNITY_IOS || UNITY_EDITOR
+#if  UNITY_EDITOR
             savePath = savePath.Replace("/ios", "");
 #elif UNITY_ANDROID
             savePath = savePath.Replace("/android","");
+#elif (UNITY_IOS)
+            savePath = savePath.Replace("/ios", "");
 #endif
 
             System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
