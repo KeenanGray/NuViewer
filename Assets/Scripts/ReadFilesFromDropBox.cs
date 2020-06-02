@@ -24,8 +24,11 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //   data.AddField("include_deleted", "false");
         //   data.AddField("include_has_explicit_shared_numbers", "false");
         //   data.AddField("include_non_downloadable_files", "true");
-
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"\"}"));
+#if UNITY_IOS || UNITY_EDITOR
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/ios\"}"));
+#elif UNITY_ANDROID
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/android\"}"));
+#endif
         yield break;
     }
 
@@ -50,7 +53,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
         var entries = N["entries"].Values;
         foreach (JSONNode jsn in entries)
         {
-            // Debug.Log(jsn.ToString());
+            Debug.Log(jsn.ToString());
             //if the file is a unity asset bundle, create a button for it
             if (!jsn["name"].Value.Contains(".dat") && !jsn["name"].Value.Contains(".xml"))
             {
