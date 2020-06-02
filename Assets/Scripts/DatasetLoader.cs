@@ -26,6 +26,23 @@ public class DatasetLoader : MonoBehaviour
     // This function is called when vuforia gives the started callback
     void OnVuforiaStarted()
     {
+        // Request an ImageTracker instance from the TrackerManager.
+        ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+
+        objectTracker.Stop();
+        IEnumerable<DataSet> dataSetList = objectTracker.GetActiveDataSets();
+        foreach (DataSet set in dataSetList.ToList())
+        {
+            objectTracker.DeactivateDataSet(set);
+        }
+
+        GetFileByPlatform("VuforiaMars_Images.xml");
+        GetFileByPlatform("AR-Games-2020.xml");
+
+    }
+
+    void GetFileByPlatform(string fileName)
+    {
 
         // The 'path' string determines the location of xml file
         // For convinence the RealTime.xml is placed in the StreamingAssets folder
@@ -33,11 +50,11 @@ public class DatasetLoader : MonoBehaviour
 
         string path = "";
 #if UNITY_IPHONE && !UNITY_EDITOR
-		path = Application.persistentDataPath + "/VuforiaMars_Images.xml";
+		path = Application.persistentDataPath + "/"+fileName;
 #elif UNITY_ANDROID && !UNITY_EDITOR
-		path = "jar:file://" + Application.dataPath + "!/assets/RealTime.xml";
+		path = "jar:file://" + Application.dataPath + "!/assets/" + fileName;
 #else
-        path = Application.persistentDataPath + "/VuforiaMars_Images.xml";
+        path = Application.persistentDataPath + "/" + fileName;
 #endif
 
         bool status = LoadDataSet(path, VuforiaUnity.StorageType.STORAGE_ABSOLUTE);
@@ -55,15 +72,8 @@ public class DatasetLoader : MonoBehaviour
     // Load and activate a data set at the given path.
     private bool LoadDataSet(string dataSetPath, VuforiaUnity.StorageType storageType)
     {
-        // Request an ImageTracker instance from the TrackerManager.
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
 
-        objectTracker.Stop();
-        IEnumerable<DataSet> dataSetList = objectTracker.GetActiveDataSets();
-        foreach (DataSet set in dataSetList.ToList())
-        {
-            objectTracker.DeactivateDataSet(set);
-        }
 
         // Check if the data set exists at the given path.
         if (!DataSet.Exists(dataSetPath, storageType))
