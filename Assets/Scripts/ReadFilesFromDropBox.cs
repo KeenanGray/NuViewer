@@ -57,7 +57,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
         var entries = N["entries"].Values;
         foreach (JSONNode jsn in entries)
         {
-            Debug.Log(jsn.ToString());
+            //Debug.Log(jsn.ToString());
             //if the file is a unity asset bundle, create a button for it
             if (!jsn["name"].Value.Contains(".dat") && !jsn["name"].Value.Contains(".xml") && jsn[".tag"].Value != "folder")
             {
@@ -68,9 +68,13 @@ public class ReadFilesFromDropBox : MonoBehaviour
             }
             else
             {
-                //print out the names of additonal unrecognized files
-                //and download them
-                AssetBundleDownloader.DownloadFileFromDropBox(jsn["path_display"].Value);
+                if (jsn[".tag"].Value != "folder")
+                {
+                    //print out the names of additonal unrecognized files
+
+                    //and download them
+                    AssetBundleDownloader.DownloadFileFromDropBox(jsn["path_display"].Value);
+                }
             }
         }
     }

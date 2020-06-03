@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5060811691670115009}
   - component: {fileID: 8409353285446962354}
   - component: {fileID: 6025797772572514011}
+  - component: {fileID: 5680384660802931785}
   m_Layer: 5
   m_Name: LoadSceneButton
   m_TagString: Untagged
@@ -27,7 +28,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1729673096169989688}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -35,10 +36,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1124, y: 298.17432}
+  m_SizeDelta: {x: 0, y: 298.17432}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5207319060679037134
 CanvasRenderer:
@@ -134,6 +135,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ui_button: {fileID: 8409353285446962354}
   ui_text: {fileID: 6128624378912696314}
+--- !u!114 &5680384660802931785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1729673096169989688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 720
+  m_MinHeight: 300
+  m_PreferredWidth: 1080
+  m_PreferredHeight: 300
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &9034345787981594018
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,10 +187,10 @@ RectTransform:
   m_Father: {fileID: 3777743578081618870}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 298}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2300868201526747202
 CanvasRenderer:
@@ -226,7 +247,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 200
+  m_fontSize: 131.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -272,7 +293,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0

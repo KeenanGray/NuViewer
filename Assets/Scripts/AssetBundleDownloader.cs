@@ -49,6 +49,7 @@ public class AssetBundleDownloader : MonoBehaviour
         yield return request.SendWebRequest();
         if (request.isNetworkError || request.isHttpError)
         {
+            Debug.Log("Error " + path);
             Debug.Log(request.error);
         }
         else
