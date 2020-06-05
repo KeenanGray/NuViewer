@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
+using Vuforia;
 using System.Text;
 using System.IO;
 
@@ -72,11 +72,14 @@ public class AssetBundleDownloader : MonoBehaviour
 
         if (isSceneAssetBundle)
         {
-            Debug.Log(savePath + " Downloaded");
+            BundleName = savePath.Split('/')[savePath.Split('/').Length - 1];
+
+            //            GameObject.FindObjectOfType<VuforiaBehaviour>().enabled = true;
             StartCoroutine(LoadSceneFromAssetBundle(savePath));
         }
     }
 
+    string BundleName;
     Dictionary<string, AsyncOperation> SceneLoadDict;
     IEnumerator LoadSceneFromAssetBundle(string path)
     {
@@ -92,7 +95,27 @@ public class AssetBundleDownloader : MonoBehaviour
                 //TODO: THIS MAKES THE ASSUMPTION OF 1 Scene per boundle
                 string[] scenePaths = ab.GetAllScenePaths();
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePaths[0]);
-                SceneManager.LoadScene(sceneName);
+
+
+                var async = SceneManager.LoadSceneAsync("StandardUI", LoadSceneMode.Additive);
+                while (!async.isDone)
+                {
+                    yield return null;
+                }
+              
+                GameObject.FindObjectOfType<SaveImageDatabaseToDevice>().bundleName = BundleName;
+
+                async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+                while (!async.isDone)
+                {
+                    yield return null;
+                }
+
+                Vuforia.VuforiaRuntime.Instance.InitVuforia();
+
+                SceneManager.UnloadSceneAsync("MenuScene");
+
             }
             else
             {

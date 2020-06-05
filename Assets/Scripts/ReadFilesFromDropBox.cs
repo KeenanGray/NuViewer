@@ -84,8 +84,6 @@ public class ReadFilesFromDropBox : MonoBehaviour
   */
     IEnumerator OpenSceneFromAssetBundle(Button btn, string name)
     {
-        GameObject.FindObjectOfType<VuforiaBehaviour>().enabled = true;
-        Vuforia.VuforiaRuntime.Instance.InitVuforia();
         ///load the datasets
         AssetBundleDownloader.DownloadFileFromDropBox(name, true);
         //disable the button for 1 minute

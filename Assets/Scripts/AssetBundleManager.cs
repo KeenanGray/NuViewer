@@ -8,13 +8,13 @@ using UnityEngine;
 static public class AssetBundleManager
 {
     // A dictionary to hold the AssetBundle references
-    static private Dictionary<string, AssetBundleRef> dictAssetBundleRefs;
+    static public Dictionary<string, AssetBundleRef> dictAssetBundleRefs;
     static AssetBundleManager()
     {
         dictAssetBundleRefs = new Dictionary<string, AssetBundleRef>();
     }
     // Class with the AssetBundle reference, url and version
-    private class AssetBundleRef
+    public class AssetBundleRef
     {
         public AssetBundle assetBundle = null;
         public int version;
@@ -28,7 +28,7 @@ static public class AssetBundleManager
     // Get an AssetBundle
     public static AssetBundle getAssetBundle(string url, int version)
     {
-        string keyName = url + version.ToString();
+        string keyName = url;
         AssetBundleRef abRef;
         if (dictAssetBundleRefs.TryGetValue(keyName, out abRef))
             return abRef.assetBundle;
@@ -39,7 +39,7 @@ static public class AssetBundleManager
     //load an asset bundle from a file
     public static AssetBundle loadFromFile(string url, int version)
     {
-        string keyName = url + version.ToString();
+        string keyName = url.Split('/')[url.Split('/').Length - 1];//url + version.ToString();
         AssetBundleRef abRef;
         if (dictAssetBundleRefs.TryGetValue(keyName, out abRef))
         {
@@ -48,12 +48,13 @@ static public class AssetBundleManager
         }
         else
         {
-            Debug.Log("Loading Asset Bundle From File");
             try
             {
                 var assetbundle = AssetBundle.LoadFromFile(url);
                 abRef = new AssetBundleRef(url, version);
+
                 abRef.assetBundle = assetbundle;
+                Debug.Log("adding bunlde " + keyName);
                 dictAssetBundleRefs.Add(keyName, abRef);
                 return assetbundle;
             }
