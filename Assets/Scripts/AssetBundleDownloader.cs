@@ -6,16 +6,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Text;
 using System.IO;
+using UnityEngine.XR;
 
 public class AssetBundleDownloader : MonoBehaviour
 {
     public string assetName;
     string bearer = "ei0yF_QKvGAAAAAAAAAAjHNkacTBD9GJtopVch_n_o_5DVoSCvOijYNHE63sPRZx";
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
 
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
@@ -48,7 +44,7 @@ public class AssetBundleDownloader : MonoBehaviour
         if (isSceneAssetBundle)
         {
             //activate the loading canvas
-            GameObject.Find("LoadingScreen").GetComponent<Canvas>().enabled = true;
+            GameObject.Find("LoadingScreen").GetComponent<Canvas>().enabled = true; ;
         }
 
         //while the file downloads
@@ -59,6 +55,7 @@ public class AssetBundleDownloader : MonoBehaviour
             slider.value = request.downloadProgress;
             yield return null;
         }
+        slider.value = 1.0f;
 
         if (request.isNetworkError || request.isHttpError)
         {
@@ -124,28 +121,49 @@ public class AssetBundleDownloader : MonoBehaviour
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePaths[0]);
 
                 var slider = GameObject.Find("Slider").GetComponent<Slider>();
-                var async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
-                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
-                while (!async.isDone)
+                var async = SceneManager.LoadSceneAsync("XRRig", LoadSceneMode.Additive);
+
+                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(160, 184, 70, 255);
+                while (async.progress < 0.9f)
                 {
                     slider.value = async.progress;
                     yield return null;
                 }
+                slider.value = 1.0f;
+
+                async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
+                while (async.progress < 0.9f)
+                {
+                    slider.value = async.progress;
+                    yield return null;
+                }
+                slider.value = 1.0f;
+
+                //Load the XR device
+                yield return StartCoroutine(LoadDevice());
 
                 SceneManager.UnloadSceneAsync("MenuScene");
-
             }
             else
             {
                 Debug.Log("Could not find or already loaded asset bundle" + path);
             }
-
         }
         else
         {
             Debug.Log("Could not find asset bundle " + path);
         }
+        yield break;
+    }
+
+    IEnumerator LoadDevice()
+    {
+        yield return null;
+        GameObject.FindObjectOfType<CanvasManager>().EnableAllXR();
+        yield return new WaitForSeconds(1.0f);
         yield break;
     }
 }

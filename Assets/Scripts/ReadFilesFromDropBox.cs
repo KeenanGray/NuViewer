@@ -62,7 +62,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
                 var prefab = Resources.Load("LoadSceneButton") as GameObject;
                 var go = Instantiate(prefab, GameObject.Find("Content").transform);
                 go.GetComponent<SceneButton>().ui_text.text = jsn["name"].Value;
-                go.GetComponent<SceneButton>().ui_button.onClick.AddListener(delegate { StartCoroutine(OpenSceneFromAssetBundle(go.GetComponent<Button>(), jsn["path_display"])); });
+                go.GetComponent<SceneButton>().ui_button.onClick.AddListener(delegate { OpenSceneFromAssetBundle(go.GetComponent<Button>(), jsn["path_display"]); });
             }
             else
             {
@@ -80,15 +80,10 @@ public class ReadFilesFromDropBox : MonoBehaviour
     /*
       handler for downloading and loading an asset bundle when a button is clicked.
   */
-    IEnumerator OpenSceneFromAssetBundle(Button btn, string name)
+    void OpenSceneFromAssetBundle(Button btn, string name)
     {
         ///load the datasets
         AssetBundleDownloader.DownloadFileFromDropBox(name, true);
-        //disable the button for 1 minute
-        btn.interactable = false;
-        yield return new WaitForSeconds(1.0f);
-        btn.interactable = true;
-        yield break;
     }
 }
 /* json attributes from dropbox
