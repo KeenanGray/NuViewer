@@ -135,7 +135,7 @@ public class AssetBundleDownloader : MonoBehaviour
 
                 async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
-                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 1, 0);
+                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
                 while (!async.isDone)
                 {
                     slider.value = async.progress;
