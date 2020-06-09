@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Vuforia;
 using System.Text;
 using System.IO;
 
 public class AssetBundleDownloader : MonoBehaviour
 {
     public string assetName;
+    string bearer = "ei0yF_QKvGAAAAAAAAAAjHNkacTBD9GJtopVch_n_o_5DVoSCvOijYNHE63sPRZx";
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +31,7 @@ public class AssetBundleDownloader : MonoBehaviour
 
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
         request.SetRequestHeader("Dropbox-API-Arg", path);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
@@ -94,7 +94,7 @@ public class AssetBundleDownloader : MonoBehaviour
     {
         var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
@@ -124,25 +124,14 @@ public class AssetBundleDownloader : MonoBehaviour
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePaths[0]);
 
                 var slider = GameObject.Find("Slider").GetComponent<Slider>();
-                var async = SceneManager.LoadSceneAsync("StandardUI", LoadSceneMode.Additive);
+                var async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
                 while (!async.isDone)
                 {
                     slider.value = async.progress;
                     yield return null;
                 }
-
-                GameObject.FindObjectOfType<SaveImageDatabaseToDevice>().bundleName = BundleName;
-
-                async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
-                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 1, 0);
-                while (!async.isDone)
-                {
-                    slider.value = async.progress;
-                    yield return null;
-                }
-
-                Vuforia.VuforiaRuntime.Instance.InitVuforia();
 
                 SceneManager.UnloadSceneAsync("MenuScene");
 

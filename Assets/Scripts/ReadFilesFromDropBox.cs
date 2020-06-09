@@ -5,16 +5,15 @@ using UnityEngine.Networking;
 using System.Text;
 using SimpleJSON;
 using UnityEngine.UI;
-using Vuforia;
 
 public class ReadFilesFromDropBox : MonoBehaviour
 {
+    string bearer = "ei0yF_QKvGAAAAAAAAAAjHNkacTBD9GJtopVch_n_o_5DVoSCvOijYNHE63sPRZx";
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder"));
     }
-
 
     IEnumerator GetRequest(string uri)
     {
@@ -40,7 +39,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
     {
         var request = new UnityWebRequest(url, "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
