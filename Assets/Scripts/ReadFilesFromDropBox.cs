@@ -41,7 +41,6 @@ public class ReadFilesFromDropBox : MonoBehaviour
         var request = new UnityWebRequest(url, "POST");
 
         request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
-        request.SetRequestHeader("Content-Type", "application/json");
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);

@@ -24,29 +24,42 @@ public class AssetBundleDownloader : MonoBehaviour
             GameObject.FindObjectOfType<AssetBundleDownloader>().DownloadFile(path, isSceneAssetBundle));
     }
 
+    int FileSize;
     IEnumerator DownloadFile(string path, bool isSceneAssetBundle = false)
     {
+        yield return GetFileSize(path);
+
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
         request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
-        // request.SetRequestHeader("Content-Type", "text/plain");
         request.SetRequestHeader("Dropbox-API-Arg", path);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(null);
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
 
-        //see if the file exists or if its an older version
-        /*
-        if (File.Exists(Application.persistentDataPath + SimpleJSON.JSONNode.Parse(path)["path"].Value))
-        {
-            Debug.Log("file already exists");
-            yield break;
-        }
-        */
-
         string savePath = "";
-        yield return request.SendWebRequest();
+
+        // yield return request.SendWebRequest();
+        request.SendWebRequest();
+
+        //only show the loading screen if a scene is loading
+        //Sometimes we load Vuforia .xml and .dat files - this happens on launch in the background
+        if (isSceneAssetBundle)
+        {
+            //activate the loading canvas
+            GameObject.Find("LoadingScreen").GetComponent<Canvas>().enabled = true;
+        }
+
+        //while the file downloads
+        //update slider with progress
+        var slider = GameObject.Find("Slider").GetComponent<Slider>();
+        while (request.downloadProgress < 1.0f)
+        {
+            slider.value = request.downloadProgress;
+            yield return null;
+        }
+
         if (request.isNetworkError || request.isHttpError)
         {
             Debug.Log("Error " + path);
@@ -64,19 +77,35 @@ public class AssetBundleDownloader : MonoBehaviour
 #elif (UNITY_IOS)
             savePath = savePath.Replace("/ios", "");
 #endif
-
+            //save the file 
             System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
         }
-
+        //When download finishes, 
         var res = request.downloadHandler.text;
 
         if (isSceneAssetBundle)
         {
             BundleName = savePath.Split('/')[savePath.Split('/').Length - 1];
-
-            //            GameObject.FindObjectOfType<VuforiaBehaviour>().enabled = true;
             StartCoroutine(LoadSceneFromAssetBundle(savePath));
         }
+    }
+
+    IEnumerator GetFileSize(string path)
+    {
+        var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
+
+        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
+        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+        var res = request.downloadHandler.text;
+        //parse the json
+        var N = SimpleJSON.JSON.Parse(res);
+        FileSize = int.Parse(N["size"].Value);
     }
 
     string BundleName;
@@ -88,27 +117,28 @@ public class AssetBundleDownloader : MonoBehaviour
 
         if (ab != null)
         {
-            // Debug.Log("loading asset bundle");
-
             if (ab.isStreamedSceneAssetBundle)
             {
                 //TODO: THIS MAKES THE ASSUMPTION OF 1 Scene per boundle
                 string[] scenePaths = ab.GetAllScenePaths();
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePaths[0]);
 
-
+                var slider = GameObject.Find("Slider").GetComponent<Slider>();
                 var async = SceneManager.LoadSceneAsync("StandardUI", LoadSceneMode.Additive);
                 while (!async.isDone)
                 {
+                    slider.value = async.progress;
                     yield return null;
                 }
-              
+
                 GameObject.FindObjectOfType<SaveImageDatabaseToDevice>().bundleName = BundleName;
 
                 async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
+                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 1, 0);
                 while (!async.isDone)
                 {
+                    slider.value = async.progress;
                     yield return null;
                 }
 

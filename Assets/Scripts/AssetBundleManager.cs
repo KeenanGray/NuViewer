@@ -54,7 +54,6 @@ static public class AssetBundleManager
                 abRef = new AssetBundleRef(url, version);
 
                 abRef.assetBundle = assetbundle;
-                Debug.Log("adding bunlde " + keyName);
                 dictAssetBundleRefs.Add(keyName, abRef);
                 return assetbundle;
             }

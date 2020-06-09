@@ -8,12 +8,16 @@ using TMPro;
 public class SaveImageDatabaseToDevice : MonoBehaviour
 {
     public string bundleName;
-
+    Button OpenGalleryBtn;
     // Start is called before the first frame update
     void Start()
     {
         bundleName = "";
         GetComponent<Button>().onClick.AddListener(ListVuforiaComponents);
+        OpenGalleryBtn = GameObject.Find("OpenGalleryBtn").GetComponent<Button>();
+        OpenGalleryBtn.onClick.AddListener(OpenGallery);
+        OpenGalleryBtn.gameObject.SetActive(false);
+
     }
 
     void ListVuforiaComponents()
@@ -24,12 +28,6 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
         {
             //if we don't have permission we can request again
             NativeGallery.RequestPermission();
-        }
-
-        if (bundleName == null || bundleName == "")
-        {
-            Debug.LogError("problem identifying bundle name");
-            return;
         }
 
         foreach (TrackableBehaviour x in Vuforia.TrackerManager.Instance.GetStateManager().GetTrackableBehaviours())
@@ -87,12 +85,9 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
 
     IEnumerator LoadingPanel()
     {
-        var button = GameObject.Find("OpenGalleryBtn").GetComponent<Button>();
+        OpenGalleryBtn.gameObject.SetActive(false);
 
-        button.onClick.AddListener(OpenGallery);
-        button.gameObject.SetActive(false);
-
-        GameObject.Find("Loading").GetComponent<Canvas>().enabled = true;
+        GameObject.Find("LoadingCanvas").GetComponent<Canvas>().enabled = true;
 
         yield return new WaitForSeconds(1.0f);
         GameObject.Find("SavingText").GetComponent<TextMeshProUGUI>().text = "Saved";
@@ -100,15 +95,15 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
         //set the button visible on IOS 
 
 #if UNITY_IOS
-        button.gameObject.SetActive(true);
+        OpenGalleryBtn.gameObject.SetActive(true);
 #endif
-//TODO Add android support to this function
+        //TODO Add android support to this function
 
         yield return new WaitForSeconds(3.0f);
 
-        GameObject.Find("Loading").GetComponent<Canvas>().enabled = false;
-
-        GameObject.Find("Loading").GetComponentInChildren<TextMeshProUGUI>().text = "Saving";
+        GameObject.Find("LoadingCanvas").GetComponent<Canvas>().enabled = false;
+        GameObject.Find("LoadingCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Saving";
+       //OpenGalleryBtn.gameObject.SetActive(false);
 
         yield break;
     }
