@@ -6,6 +6,7 @@ using System.Text;
 using SimpleJSON;
 using UnityEngine.UI;
 using Vuforia;
+using System;
 
 public class ReadFilesFromDropBox : MonoBehaviour
 {
@@ -14,7 +15,6 @@ public class ReadFilesFromDropBox : MonoBehaviour
     {
         StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder"));
     }
-
 
     IEnumerator GetRequest(string uri)
     {
@@ -54,7 +54,11 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //parse the json
         var N = JSON.Parse(res);
         var entries = N["entries"].Values;
-        foreach (JSONNode jsn in entries)
+
+        //Create a dictionary of the latest files.
+        var FilesFromDropbox = CreateFilesDictionary(entries);
+
+        foreach (JSONNode jsn in FilesFromDropbox.Values)
         {
             //Debug.Log(jsn.ToString());
             //if the file is a unity asset bundle, create a button for it
@@ -62,20 +66,49 @@ public class ReadFilesFromDropBox : MonoBehaviour
             {
                 var prefab = Resources.Load("LoadSceneButton") as GameObject;
                 var go = Instantiate(prefab, GameObject.Find("Content").transform);
-                go.GetComponent<SceneButton>().ui_text.text = jsn["name"].Value;
+                go.GetComponent<SceneButton>().ui_text.text = jsn["name"].Value.Split(' ')[jsn["name"].Value.Split(' ').Length - 1];
                 go.GetComponent<SceneButton>().ui_button.onClick.AddListener(delegate { StartCoroutine(OpenSceneFromAssetBundle(go.GetComponent<Button>(), jsn["path_display"])); });
             }
-            else
+            else //non "scene asset bundle" files are downloaded [.xml and .dat files required for Vuforia]
             {
                 if (jsn[".tag"].Value != "folder")
                 {
                     //print out the names of additonal unrecognized files
-
                     //and download them
-                    AssetBundleDownloader.DownloadFileFromDropBox(jsn["path_display"].Value);
+                    AssetBundleDownloader.DownloadFileFromDropBox(jsn["path_display"].Value, false);
                 }
             }
         }
+    }
+
+    Dictionary<string, JSONNode> CreateFilesDictionary(JSONNode.ValueEnumerator entries)
+    {
+        var result = new Dictionary<string, JSONNode>();
+
+        foreach (JSONNode jsn in entries)
+        {
+            var name = jsn["name"].Value.Split(' ')[jsn["name"].Value.Split(' ').Length - 1];
+            //add each result to the dictionary
+
+            if (!result.ContainsKey(name))
+            {
+                result.Add(name, jsn);
+            }
+            else
+            {
+                //if result already contains key, compare the modified dates in UTC
+                var Date1 = result[name]["server_modified"].Value;
+                var Date2 = jsn["server_modified"].Value;
+
+                if (DateTime.Parse(Date1) < DateTime.Parse(Date2))
+                {
+                    Debug.Log("updating file in dict");
+                    result[name] = jsn;
+                }
+            }
+        }
+
+        return result;
     }
 
     /*
@@ -83,12 +116,8 @@ public class ReadFilesFromDropBox : MonoBehaviour
   */
     IEnumerator OpenSceneFromAssetBundle(Button btn, string name)
     {
-        ///load the datasets
+        ///Downloads the asset bundle and loads it from filestream
         AssetBundleDownloader.DownloadFileFromDropBox(name, true);
-        //disable the button for 1 minute
-        btn.interactable = false;
-        yield return new WaitForSeconds(1.0f);
-        btn.interactable = true;
         yield break;
     }
 }
