@@ -74,8 +74,13 @@ public class AssetBundleDownloader : MonoBehaviour
 #elif (UNITY_IOS)
             savePath = savePath.Replace("/ios", "");
 #endif
-            //save the file 
-            System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
+
+            //save the .dat and .xml files 
+            if (!isSceneAssetBundle)
+            {
+                //save the file 
+                System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
+            }
         }
         //When download finishes, 
         var res = request.downloadHandler.text;

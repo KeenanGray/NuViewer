@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 static public class AssetBundleManager
 {
@@ -52,6 +53,35 @@ static public class AssetBundleManager
             {
                 var assetbundle = AssetBundle.LoadFromFile(url);
                 abRef = new AssetBundleRef(url, version);
+
+                abRef.assetBundle = assetbundle;
+                dictAssetBundleRefs.Add(keyName, abRef);
+                return assetbundle;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return null;
+            }
+        }
+    }
+
+    //load an asset bundle from a stream
+    public static AssetBundle loadFromStream(string name, Stream url, int version)
+    {
+        string keyName = name.Split('/')[name.Split('/').Length - 1];//url + version.ToString();
+        AssetBundleRef abRef;
+        if (dictAssetBundleRefs.TryGetValue(keyName, out abRef))
+        {
+            Debug.LogWarning("already have that asset bundle loaded");
+            return null;
+        }
+        else
+        {
+            try
+            {
+                var assetbundle = AssetBundle.LoadFromStream(url);
+                abRef = new AssetBundleRef(name, version);
 
                 abRef.assetBundle = assetbundle;
                 dictAssetBundleRefs.Add(keyName, abRef);
