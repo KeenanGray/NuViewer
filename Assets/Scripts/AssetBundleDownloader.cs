@@ -44,7 +44,7 @@ public class AssetBundleDownloader : MonoBehaviour
         if (isSceneAssetBundle)
         {
             //activate the loading canvas
-            GameObject.Find("LoadingScreen").GetComponent<Canvas>().enabled = true; ;
+            GameObject.Find("LoadingScreen").GetComponent<Canvas>().enabled = true;
         }
 
         //while the file downloads
@@ -74,21 +74,22 @@ public class AssetBundleDownloader : MonoBehaviour
 #elif (UNITY_IOS)
             savePath = savePath.Replace("/ios", "");
 #endif
+            //When download finishes, 
 
             //save the .dat and .xml files 
             if (!isSceneAssetBundle)
             {
-                //save the file 
                 System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
             }
-        }
-        //When download finishes, 
-        var res = request.downloadHandler.text;
-
-        if (isSceneAssetBundle)
-        {
-            BundleName = savePath.Split('/')[savePath.Split('/').Length - 1];
-            StartCoroutine(LoadSceneFromAssetBundle(savePath));
+            else //load scene from the webrequest as a datastream (this avoids saving unnecessarily to device)
+            {
+                var res = request.downloadHandler.data;
+                using (var stream = new MemoryStream(res))
+                {
+                    BundleName = savePath.Split('/')[savePath.Split('/').Length - 1];
+                    StartCoroutine(LoadSceneFromAssetBundle(savePath, stream));
+                }
+            }
         }
     }
 
@@ -112,10 +113,10 @@ public class AssetBundleDownloader : MonoBehaviour
 
     string BundleName;
     Dictionary<string, AsyncOperation> SceneLoadDict;
-    IEnumerator LoadSceneFromAssetBundle(string path)
+    IEnumerator LoadSceneFromAssetBundle(string path, Stream stream)
     {
         SceneLoadDict = new Dictionary<string, AsyncOperation>();
-        var ab = AssetBundleManager.loadFromFile(path, 0);
+        var ab = AssetBundleManager.loadFromStream(path, stream, 0);
 
         if (ab != null)
         {
@@ -163,7 +164,6 @@ public class AssetBundleDownloader : MonoBehaviour
         }
         yield break;
     }
-
     IEnumerator LoadDevice()
     {
         yield return null;
@@ -171,6 +171,7 @@ public class AssetBundleDownloader : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         yield break;
     }
+
 }
 
 
