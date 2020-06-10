@@ -9,7 +9,7 @@ public class XRCanvasInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       // Configures the app to not shut down the screen and sets the brightness to maximum.
+        // Configures the app to not shut down the screen and sets the brightness to maximum.
         // Brightness control is expected to work only in iOS, see:
         // https://docs.unity3d.com/ScriptReference/Screen-brightness.html.
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -25,16 +25,16 @@ public class XRCanvasInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Closed Button " + Api.IsCloseButtonPressed);
-        Debug.Log("Gear Button" + Api.IsGearButtonPressed);
 
         if (Api.IsGearButtonPressed)
         {
+            Debug.Log("Gear Button" + Api.IsGearButtonPressed);
             Api.ScanDeviceParams();
         }
 
         if (Api.IsCloseButtonPressed)
         {
+            Debug.Log("Closed Button " + Api.IsCloseButtonPressed);
             Application.Quit();
         }
 
