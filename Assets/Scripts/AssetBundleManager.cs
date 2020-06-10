@@ -40,7 +40,8 @@ static public class AssetBundleManager
     //load an asset bundle from a file
     public static AssetBundle loadFromFile(string url, int version)
     {
-        string keyName = url.Split('/')[url.Split('/').Length - 1];//url + version.ToString();
+        string fileName = url.Split('/')[url.Split('/').Length - 1];//url + version.ToString();
+        string keyName = fileName.Split(' ')[fileName.Split(' ').Length - 1];
         AssetBundleRef abRef;
         if (dictAssetBundleRefs.TryGetValue(keyName, out abRef))
         {
@@ -66,10 +67,11 @@ static public class AssetBundleManager
         }
     }
 
-     //load an asset bundle from a file
+    //load an asset bundle from a stream
     public static AssetBundle loadFromStream(string name, Stream url, int version)
     {
-        string keyName = name.Split('/')[name.Split('/').Length - 1];//url + version.ToString();
+        string fileName = name.Split('/')[name.Split('/').Length - 1];//url + version.ToString();
+        string keyName = fileName.Split(' ')[fileName.Split(' ').Length - 1];
         AssetBundleRef abRef;
         if (dictAssetBundleRefs.TryGetValue(keyName, out abRef))
         {
@@ -98,7 +100,7 @@ static public class AssetBundleManager
     // Unload an AssetBundle
     public static void Unload(string url, int version, bool allObjects)
     {
-        string keyName = url + version.ToString();
+        string keyName = url;
         AssetBundleRef abRef;
         if (dictAssetBundleRefs.TryGetValue(keyName, out abRef))
         {

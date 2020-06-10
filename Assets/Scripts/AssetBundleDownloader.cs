@@ -4,18 +4,14 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Vuforia;
 using System.Text;
 using System.IO;
+using UnityEngine.XR;
 
 public class AssetBundleDownloader : MonoBehaviour
 {
-    public string assetName;
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
+    public StringReference assetName;
+    string bearer = "ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d";
 
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
@@ -31,7 +27,7 @@ public class AssetBundleDownloader : MonoBehaviour
 
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
         request.SetRequestHeader("Dropbox-API-Arg", path);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
@@ -59,6 +55,7 @@ public class AssetBundleDownloader : MonoBehaviour
             slider.value = request.downloadProgress;
             yield return null;
         }
+        slider.value = 1.0f;
 
         if (request.isNetworkError || request.isHttpError)
         {
@@ -100,7 +97,7 @@ public class AssetBundleDownloader : MonoBehaviour
     {
         var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
@@ -130,34 +127,50 @@ public class AssetBundleDownloader : MonoBehaviour
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePaths[0]);
 
                 var slider = GameObject.Find("Slider").GetComponent<Slider>();
+
                 var async = SceneManager.LoadSceneAsync("StandardUI", LoadSceneMode.Additive);
-                while (!async.isDone)
+                slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(160, 184, 70, 255);
+                while (async.progress < 0.9f)
                 {
                     slider.value = async.progress;
                     yield return null;
                 }
+                slider.value = 1.0f;
 
-                GameObject.FindObjectOfType<SaveImageDatabaseToDevice>().bundleName = BundleName;
+                //can't unload the scene immediately
+                //wait for new scene to load
+                while (!SceneManager.GetSceneByName("StandardUI").isLoaded)
+                {
+                    yield return null;
+                }
+                //set the new active scene so vuforia objects initialize in the right place
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName("StandardUI"));
+
+                Vuforia.VuforiaRuntime.Instance.InitVuforia();
+
+                //Set the name of the asset bundle so we can unload it when the scene closes
+                assetName.Value = ab.name;
 
                 async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
                 slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
-                while (!async.isDone)
+                while (async.progress < 0.9f)
                 {
                     slider.value = async.progress;
                     yield return null;
                 }
+                slider.value = 1.0f;
 
-                Vuforia.VuforiaRuntime.Instance.InitVuforia();
-
-                SceneManager.UnloadSceneAsync("MenuScene");
-
+                async = SceneManager.UnloadSceneAsync("MenuScene");
+                while (async.progress < 0.9f)
+                {
+                    yield return null;
+                }
             }
             else
             {
                 Debug.Log("Could not find or already loaded asset bundle" + path);
             }
-
         }
         else
         {
