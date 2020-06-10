@@ -101,7 +101,6 @@ public class ReadFilesFromDropBox : MonoBehaviour
 
                 if (DateTime.Parse(Date1) < DateTime.Parse(Date2))
                 {
-                    Debug.Log("updating file in dict");
                     result[name] = jsn;
                 }
             }

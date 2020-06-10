@@ -10,7 +10,7 @@ using UnityEngine.XR;
 
 public class AssetBundleDownloader : MonoBehaviour
 {
-    public string assetName;
+    public StringReference assetName;
     string bearer = "ei0yF_QKvGAAAAAAAAAAjHNkacTBD9GJtopVch_n_o_5DVoSCvOijYNHE63sPRZx";
 
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
@@ -138,6 +138,9 @@ public class AssetBundleDownloader : MonoBehaviour
                 }
                 slider.value = 1.0f;
 
+                //Set the name of the asset bundle so we can unload it when the scene closes
+                assetName.Value = ab.name;
+
                 async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
                 slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
@@ -167,7 +170,7 @@ public class AssetBundleDownloader : MonoBehaviour
     IEnumerator LoadDevice()
     {
         yield return null;
-        GameObject.FindObjectOfType<CanvasManager>().EnableAllXR();
+        KeenanXR.XRManager.EnableAllXR();
         yield return new WaitForSeconds(1.0f);
         yield break;
     }
