@@ -51,9 +51,17 @@ namespace KeenanXR
                     break;
                 }
             }
-            XRGeneralSettings.Instance.Manager.StopSubsystems();
-            XRGeneralSettings.Instance.Manager.DeinitializeLoader();
+
+            if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
+            {
+                XRGeneralSettings.Instance.Manager.StopSubsystems();
+                XRGeneralSettings.Instance.Manager.DeinitializeLoader();
+            }
+           
+
         }
+
+
 
         public static void EnableAllXR()
         {
