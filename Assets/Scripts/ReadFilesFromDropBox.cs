@@ -65,7 +65,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
             if (!jsn["name"].Value.Contains(".dat") && !jsn["name"].Value.Contains(".xml") && jsn[".tag"].Value != "folder")
             {
                 var prefab = Resources.Load("LoadSceneButton") as GameObject;
-                var go = Instantiate(prefab, GameObject.Find("Content").transform);
+                var go = Instantiate(prefab, GameObject.Find("ProjectContent").transform);
                 go.GetComponent<SceneButton>().ui_text.text = jsn["name"].Value.Split(' ')[jsn["name"].Value.Split(' ').Length - 1];
                 go.GetComponent<SceneButton>().ui_button.onClick.AddListener(delegate { StartCoroutine(OpenSceneFromAssetBundle(go.GetComponent<Button>(), jsn["path_display"])); });
             }
@@ -102,7 +102,6 @@ public class ReadFilesFromDropBox : MonoBehaviour
 
                 if (DateTime.Parse(Date1) < DateTime.Parse(Date2))
                 {
-                    Debug.Log("updating file in dict");
                     result[name] = jsn;
                 }
             }

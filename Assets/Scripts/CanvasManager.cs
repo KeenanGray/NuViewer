@@ -13,7 +13,10 @@ public class CanvasManager : MonoBehaviour
         SelectionScreen = transform.GetChild(0);
         LoadingScreen = transform.GetChild(1);
 
-        LoadingScreen.GetComponent<Canvas>().enabled = false;
+        for (int i = 1; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).GetComponent<Canvas>().enabled = false;
+        }
     }
 }
 
