@@ -68,7 +68,7 @@ public class AssetBundleDownloader : MonoBehaviour
 
             //remove '/ios' or '/android' from path
 #if  UNITY_EDITOR
-            savePath = savePath.Replace("/ios", "");
+            savePath = savePath.Replace("/android", "");
 #elif UNITY_ANDROID
             savePath = savePath.Replace("/android","");
 #elif (UNITY_IOS)

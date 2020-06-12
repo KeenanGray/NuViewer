@@ -28,9 +28,9 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //first download root folder files, xml and .dat - platform independent
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"\"}"));
 
-#if UNITY_IOS || UNITY_EDITOR
+#if UNITY_IOS 
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/ios\"}"));
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_EDITOR
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/android\"}"));
 #endif
         yield break;
