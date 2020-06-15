@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Vuforia;
 using TMPro;
+using System;
 
 public class SaveImageDatabaseToDevice : MonoBehaviour
 {
@@ -30,25 +31,28 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
             NativeGallery.RequestPermission();
         }
 
-        foreach (TrackableBehaviour x in Vuforia.TrackerManager.Instance.GetStateManager().GetTrackableBehaviours())
+        foreach (TurnOffBehaviorCustom x in GameObject.FindObjectsOfType<TurnOffBehaviorCustom>())
         {
             // var asb = AssetBundleManager.getAssetBundle(bundleName, 0);
             Texture tex = null;
             //check if this tracker is used by the scene
             if (x.gameObject.name != "New Game Object" || x.transform.childCount > 0)
             {
-                var trackableName = x.TrackableName;
+                var trackableName = x.GetComponent<ImageTargetBehaviour>().TrackableName;
                 Debug.Log("found trackable " + trackableName); //print the name of the trackable
 
                 //get the trackable image
                 try
                 {
-                    tex = x.GetComponent<TurnOffBehaviorCustom>().image;
+                    tex = x.image;
                 }
                 catch (System.Exception e)
                 {
+                    Debug.Log(e);
                     continue;
                 }
+                if (tex == null)
+                    return;
 
                 var sprite = Sprite.Create((Texture2D)tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0));
                 Texture2D t = sprite.texture;
@@ -70,7 +74,24 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
 
     IEnumerator SaveImages(Texture2D t)
     {
-        NativeGallery.SaveImageToGallery(t.EncodeToPNG(), "ImageTargets", "Image.png", null);
+        Debug.Log("Saving texure " + t.name);
+        try
+        {
+            NativeGallery.SaveImageToGallery(t.EncodeToPNG(), "ImageTargets", "Image.png", null);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            var rt = RenderTexture.GetTemporary(t.width,t.height,0);
+            Graphics.Blit(t, rt);
+            RenderTexture.active = rt;
+            Texture2D destination_texture = new Texture2D(t.width, t.height);
+            destination_texture.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+            destination_texture.Apply();
+
+            NativeGallery.SaveImageToGallery(destination_texture.EncodeToPNG(), "ImageTargets", "Image.png", null);
+
+        }
         yield break;
     }
 
@@ -103,7 +124,7 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
 
         GameObject.Find("LoadingCanvas").GetComponent<Canvas>().enabled = false;
         GameObject.Find("LoadingCanvas").GetComponentInChildren<TextMeshProUGUI>().text = "Saving";
-       //OpenGalleryBtn.gameObject.SetActive(false);
+        //OpenGalleryBtn.gameObject.SetActive(false);
 
         yield break;
     }
