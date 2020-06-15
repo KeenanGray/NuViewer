@@ -130,13 +130,20 @@ public class AssetBundleDownloader : MonoBehaviour
 
                 var async = SceneManager.LoadSceneAsync("XRRig", LoadSceneMode.Additive);
 
+
                 slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(160, 184, 70, 255);
+                async.allowSceneActivation = false;
+                //Load the XR device
                 while (async.progress < 0.9f)
                 {
                     slider.value = async.progress;
                     yield return null;
                 }
                 slider.value = 1.0f;
+                yield return StartCoroutine(LoadDevice());
+
+                async.allowSceneActivation = true;
+
 
                 //Set the name of the asset bundle so we can unload it when the scene closes
                 assetName.Value = ab.name;
@@ -151,8 +158,7 @@ public class AssetBundleDownloader : MonoBehaviour
                 }
                 slider.value = 1.0f;
 
-                //Load the XR device
-                yield return StartCoroutine(LoadDevice());
+
 
                 SceneManager.UnloadSceneAsync("MenuScene");
             }

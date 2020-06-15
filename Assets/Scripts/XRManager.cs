@@ -41,6 +41,8 @@ namespace KeenanXR
 
         public static void DisableAllXR()
         {
+
+#if UNITY_IOS
             displays.Clear();
             SubsystemManager.GetInstances(displays);
             foreach (var displaySubsystem in displays)
@@ -51,20 +53,21 @@ namespace KeenanXR
                     break;
                 }
             }
-
             if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
             {
-                XRGeneralSettings.Instance.Manager.StopSubsystems();
+
                 XRGeneralSettings.Instance.Manager.DeinitializeLoader();
+                XRGeneralSettings.Instance.Manager.StopSubsystems();
             }
-           
-
+#endif
         }
-
-
 
         public static void EnableAllXR()
         {
+            XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
+            XRGeneralSettings.Instance.Manager.StartSubsystems();
+            
+#if UNITY_IOS
             displays.Clear();
             SubsystemManager.GetInstances(displays);
             foreach (var displaySubsystem in displays)
@@ -75,10 +78,13 @@ namespace KeenanXR
                     break;
                 }
             }
+            if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
+            {
+                XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
+                XRGeneralSettings.Instance.Manager.StartSubsystems();
+            }
+#endif
 
-            XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
-            XRGeneralSettings.Instance.Manager.StartSubsystems();
         }
     }
-
 }
