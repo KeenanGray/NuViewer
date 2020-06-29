@@ -19,24 +19,33 @@ public class EditorCameraControls : MonoBehaviour
     void Update()
     {
         transform.Translate(transform.forward * (Input.GetAxis("Vertical") * speed), Space.World);
-        transform.Rotate(transform.up * (Input.GetAxis("Horizontal") * rotSpeed));
+        transform.Rotate(transform.up * (Input.GetAxis("Horizontal") * rotSpeed), Space.World);
 
-        if (Input.GetMouseButton(0))
-        {
-            RaycastHit hit;
-            var m_Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(m_Ray.origin, m_Ray.direction, out hit, Mathf.Infinity, -1, QueryTriggerInteraction.Collide))
-            {
-                try
+        /*
+                if (Input.GetMouseButtonDown(0))
                 {
-                    transform.LookAt(hit.point);
-                }
-                catch (Exception e)
-                {
+                    RaycastHit hit;
+                    var m_Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                }
-            }
-        }
+                    if (Physics.Raycast(m_Ray.origin, m_Ray.direction, out hit, Mathf.Infinity, -1, QueryTriggerInteraction.Collide))
+                    {
+                        try
+                        {
+                            transform.LookAt(hit.point);
+
+                            var angle = 0;
+                            if (transform.position.y < hit.point.y)
+                                angle = 10;
+                            else
+                                angle = -10;
+
+                            transform.Rotate(transform.right * angle, Space.World);
+                        }
+                        catch (Exception e)
+                        {
+
+                        }                    
+                    */
     }
 }
+
