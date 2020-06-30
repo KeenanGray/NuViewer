@@ -59,4 +59,6 @@ sysinfo.txt
 crashlytics-build.properties
 config.txt
 configAR.txt
+Assets/configAR.txt
+Assets/StreamingAssets/*
 .DS_Store
