@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using UnityEngine.XR.Management;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -12,15 +13,27 @@ public class CanvasManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        KeenanXR.XRManager.DisableAllXR();
+        StartCoroutine("disableXR");
 
         SelectionScreen = transform.GetChild(0);
         LoadingScreen = transform.GetChild(1);
 
         LoadingScreen.GetComponent<Canvas>().enabled = false;
+
     }
 
-
-   
+    IEnumerator disableXR()
+    {
+        while (true)
+        {
+            if (XRGeneralSettings.Instance != null)
+            {
+                KeenanXR.XRManager.DisableAllXR();
+                break;
+            }
+            else
+                yield return null;
+        }
+    }
 }
 

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using System.Text;
 using System.IO;
 using UnityEngine.XR;
+using UnityEngine.XR.Management;
 
 public class AssetBundleDownloader : MonoBehaviour
 {
@@ -179,7 +180,7 @@ public class AssetBundleDownloader : MonoBehaviour
     IEnumerator LoadDevice()
     {
         yield return null;
-        KeenanXR.XRManager.EnableAllXR();
+        StartCoroutine("enableXR");
         yield return new WaitForSeconds(1.0f);
         yield break;
     }
@@ -203,6 +204,20 @@ public class AssetBundleDownloader : MonoBehaviour
         Debug.Log(val);
 
         return val;
+    }
+
+    IEnumerator enableXR()
+    {
+        while (true)
+        {
+            if (XRGeneralSettings.Instance != null)
+            {
+                KeenanXR.XRManager.EnableAllXR();
+                break;
+            }
+            else
+                yield return null;
+        }
     }
 }
 
