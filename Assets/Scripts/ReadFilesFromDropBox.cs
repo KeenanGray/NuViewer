@@ -15,6 +15,8 @@ public class ReadFilesFromDropBox : MonoBehaviour
         StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder"));
     }
 
+    string bearer = AssetBundleDownloader.getBearerString();
+
     IEnumerator GetRequest(string uri)
     {
         WWWForm data = new WWWForm();
@@ -39,7 +41,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
     {
         var request = new UnityWebRequest(url, "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAjHNkacTBD9GJtopVch_n_o_5DVoSCvOijYNHE63sPRZx");
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);

@@ -11,7 +11,7 @@ using UnityEngine.XR;
 public class AssetBundleDownloader : MonoBehaviour
 {
     public StringReference assetName;
-    string bearer = "ei0yF_QKvGAAAAAAAAAAjHNkacTBD9GJtopVch_n_o_5DVoSCvOijYNHE63sPRZx";
+    string bearer;
 
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
@@ -24,6 +24,8 @@ public class AssetBundleDownloader : MonoBehaviour
     IEnumerator DownloadFile(string path, bool isSceneAssetBundle = false)
     {
         yield return GetFileSize(path);
+
+        bearer = getBearerString();
 
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
@@ -97,6 +99,7 @@ public class AssetBundleDownloader : MonoBehaviour
     {
         var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
 
+        bearer = getBearerString();
         request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
@@ -181,6 +184,32 @@ public class AssetBundleDownloader : MonoBehaviour
         yield break;
     }
 
+    public static string getBearerString()
+    {
+        var val = "";
+        var path = "";
+#if UNITY_EDITOR
+        path = "Assets/config.txt";
+#else
+    path = Application.streamingAssetsPath + "config.txt";
+#endif
+        StreamReader reader = new StreamReader(path);
+        val = reader.ReadToEnd().Split(':')[1];
+        reader.Close();
+
+        val = val.Replace(" ", "");
+        val = val.Replace("\n", "");
+
+        Debug.Log(val);
+
+        if (val.Equals("ei0yF_QKvGAAAAAAAAABCFk1qGraB3ILIc4n4bSR8Rd2anCP4k7HPxqh2Dxj2XSJ"))
+            return val;
+        else
+        {
+            Debug.LogError("incorrect value returned");
+            return null;
+        }
+    }
 }
 
 

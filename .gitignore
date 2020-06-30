@@ -57,5 +57,6 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
-
+# don't put secret keys in the repo
+config.txt
 .DS_Store
