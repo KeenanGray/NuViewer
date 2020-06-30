@@ -59,4 +59,8 @@ sysinfo.txt
 crashlytics-build.properties
 # don't put secret keys in the repo
 config.txt
+configAR.txt
+Assets/configAR.txt
+Assets/StreamingAssets/*
+config.txt
 .DS_Store
