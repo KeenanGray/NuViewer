@@ -11,7 +11,7 @@ using UnityEngine.XR;
 public class AssetBundleDownloader : MonoBehaviour
 {
     public StringReference assetName;
-    string bearer = "ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d";
+    string bearer;
 
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
@@ -27,6 +27,7 @@ public class AssetBundleDownloader : MonoBehaviour
 
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
+        bearer = getBearerString();
         request.SetRequestHeader("Authorization", "Bearer " + bearer);
         request.SetRequestHeader("Dropbox-API-Arg", path);
 
@@ -97,6 +98,7 @@ public class AssetBundleDownloader : MonoBehaviour
     {
         var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
 
+        bearer=getBearerString();
         request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
@@ -177,6 +179,27 @@ public class AssetBundleDownloader : MonoBehaviour
             Debug.Log("Could not find asset bundle " + path);
         }
         yield break;
+    }
+
+    public static string getBearerString()
+    {
+        var val = "";
+        var path = "";
+#if UNITY_EDITOR
+        path = "Assets/configAR.txt";
+#else
+    path = Application.streamingAssetsPath + "/configAR.txt";
+#endif
+        StreamReader reader = new StreamReader(path);
+        val = reader.ReadToEnd().Split(':')[1];
+        reader.Close();
+
+        val = val.Replace(" ", "");
+        val = val.Replace("\n", "");
+
+        Debug.Log(val);
+
+        return val;
     }
 }
 

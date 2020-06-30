@@ -10,6 +10,7 @@ using System;
 
 public class ReadFilesFromDropBox : MonoBehaviour
 {
+    string bearer;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,7 +41,8 @@ public class ReadFilesFromDropBox : MonoBehaviour
     {
         var request = new UnityWebRequest(url, "POST");
 
-        request.SetRequestHeader("Authorization", "Bearer ei0yF_QKvGAAAAAAAAAAgEJp_wbL978p9dzsxDimsmAR1va-MKnOA2tQ6QPbQE8d");
+        bearer = AssetBundleDownloader.getBearerString();
+        request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
@@ -132,4 +134,3 @@ public class ReadFilesFromDropBox : MonoBehaviour
     public bool is_downloadable;
     public string content_hash;
 */
-
