@@ -202,13 +202,7 @@ public class AssetBundleDownloader : MonoBehaviour
 
         Debug.Log(val);
 
-        if (val.Equals("ei0yF_QKvGAAAAAAAAABCFk1qGraB3ILIc4n4bSR8Rd2anCP4k7HPxqh2Dxj2XSJ"))
-            return val;
-        else
-        {
-            Debug.LogError("incorrect value returned");
-            return null;
-        }
+        return val;
     }
 }
 
