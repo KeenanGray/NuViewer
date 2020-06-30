@@ -57,8 +57,9 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
-config.txt
+configVR.txt
 configAR.txt
 Assets/configAR.txt
+Assets/configVR.txt
 Assets/StreamingAssets/*
 .DS_Store
