@@ -191,7 +191,7 @@ public class AssetBundleDownloader : MonoBehaviour
 #if UNITY_EDITOR
         path = "Assets/config.txt";
 #else
-    path = Application.streamingAssetsPath + "config.txt";
+    path = Application.streamingAssetsPath + "/config.txt";
 #endif
         StreamReader reader = new StreamReader(path);
         val = reader.ReadToEnd().Split(':')[1];
