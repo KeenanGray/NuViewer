@@ -189,9 +189,9 @@ public class AssetBundleDownloader : MonoBehaviour
         var val = "";
         var path = "";
 #if UNITY_EDITOR
-        path = "Assets/config.txt";
+        path = "Assets/configVR.txt";
 #else
-    path = Application.streamingAssetsPath + "/config.txt";
+    path = Application.streamingAssetsPath + "/configVR.txt";
 #endif
         StreamReader reader = new StreamReader(path);
         val = reader.ReadToEnd().Split(':')[1];
