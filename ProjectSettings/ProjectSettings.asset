@@ -168,7 +168,7 @@ PlayerSettings:
   applicationIdentifier: {}
   buildNumber:
     iPhone: 0
-  AndroidBundleVersionCode: 3
+  AndroidBundleVersionCode: 4
   AndroidMinSdkVersion: 26
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
