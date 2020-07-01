@@ -14,10 +14,21 @@ public class ReadFilesFromDropBox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder"));
+        ReadFiles();
     }
 
-    IEnumerator GetRequest(string uri)
+    public void ReadFiles(string bearer = null)
+    {
+        if (bearer == null || bearer == "")
+        {
+            bearer = GameObject.FindObjectOfType<AssetBundleDownloader>().getBearerString(this);
+            return;
+        }
+
+        StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder", bearer));
+
+    }
+    IEnumerator GetRequest(string uri, string bearer)
     {
         WWWForm data = new WWWForm();
         data.AddField("path", "");
@@ -27,21 +38,20 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //   data.AddField("include_non_downloadable_files", "true");
 
         //first download root folder files, xml and .dat - platform independent
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"\"}"));
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"\"}"));
 
 #if UNITY_IOS 
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/ios\"}"));
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer,"{\"path\":\"/ios\"}"));
 #elif UNITY_ANDROID || UNITY_EDITOR
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/android\"}"));
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"/android\"}"));
 #endif
         yield break;
     }
 
-    IEnumerator Post(string url, string bodyJsonString)
+    IEnumerator Post(string url, string bearer, string bodyJsonString)
     {
         var request = new UnityWebRequest(url, "POST");
 
-        bearer = AssetBundleDownloader.getBearerString();
         request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
@@ -77,6 +87,7 @@ public class ReadFilesFromDropBox : MonoBehaviour
                 {
                     //print out the names of additonal unrecognized files
                     //and download them
+                    Debug.Log(jsn["path_display"].Value);
                     AssetBundleDownloader.DownloadFileFromDropBox(jsn["path_display"].Value, false);
                 }
             }

@@ -11,23 +11,29 @@ using UnityEngine.XR;
 public class AssetBundleDownloader : MonoBehaviour
 {
     public StringReference assetName;
-    string bearer;
 
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
         var path = "{\"path\":\"" + filename + "\"}";
-        GameObject.FindObjectOfType<AssetBundleDownloader>().StartCoroutine(
-            GameObject.FindObjectOfType<AssetBundleDownloader>().DownloadFile(path, isSceneAssetBundle));
+        var abd = GameObject.FindObjectOfType<AssetBundleDownloader>();
+
+        abd.StartCoroutine(
+           abd.DownloadFile(path, null, isSceneAssetBundle));
     }
 
     int FileSize;
-    IEnumerator DownloadFile(string path, bool isSceneAssetBundle = false)
+    IEnumerator DownloadFile(string path, string bearer = null, bool isSceneAssetBundle = false)
     {
-        yield return GetFileSize(path);
+        //yield return GetFileSize(path);
 
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
-        bearer = getBearerString();
+        if (bearer == null || bearer == "")
+        {
+            bearer = getBearerString(this, path, isSceneAssetBundle);
+            yield break;
+        }
+
         request.SetRequestHeader("Authorization", "Bearer " + bearer);
         request.SetRequestHeader("Dropbox-API-Arg", path);
 
@@ -72,7 +78,7 @@ public class AssetBundleDownloader : MonoBehaviour
             savePath = savePath.Replace("/android", "");
 #elif UNITY_ANDROID
             savePath = savePath.Replace("/android","");
-#elif (UNITY_IOS)
+#elif UNITY_IOS
             savePath = savePath.Replace("/ios", "");
 #endif
             //When download finishes, 
@@ -80,6 +86,7 @@ public class AssetBundleDownloader : MonoBehaviour
             //save the .dat and .xml files 
             if (!isSceneAssetBundle)
             {
+                Debug.Log("saving: " + savePath);
                 System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
             }
             else //load scene from the webrequest as a datastream (this avoids saving unnecessarily to device)
@@ -94,24 +101,26 @@ public class AssetBundleDownloader : MonoBehaviour
         }
     }
 
-    IEnumerator GetFileSize(string path)
-    {
-        var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
+    /*
+        IEnumerator GetFileSize(string path)
+        {
+            var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
 
-        bearer=getBearerString();
-        request.SetRequestHeader("Authorization", "Bearer " + bearer);
+            bearer=getBearerString();
+            request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
-        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
+            request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-        yield return request.SendWebRequest();
-        var res = request.downloadHandler.text;
-        //parse the json
-        var N = SimpleJSON.JSON.Parse(res);
-        FileSize = int.Parse(N["size"].Value);
-    }
+            yield return request.SendWebRequest();
+            var res = request.downloadHandler.text;
+            //parse the json
+            var N = SimpleJSON.JSON.Parse(res);
+            FileSize = int.Parse(N["size"].Value);
+        }
+    */
 
     string BundleName;
     Dictionary<string, AsyncOperation> SceneLoadDict;
@@ -181,25 +190,79 @@ public class AssetBundleDownloader : MonoBehaviour
         yield break;
     }
 
-    public static string getBearerString()
+    public string getBearerString(object o, string filepath = "", bool m_isSceneAssetBundle = false)
     {
         var val = "";
         var path = "";
 #if UNITY_EDITOR
         path = "Assets/configAR.txt";
 #else
-    path = Application.streamingAssetsPath + "/configAR.txt";
+        path = Application.streamingAssetsPath + "/configAR.txt";
 #endif
-        StreamReader reader = new StreamReader(path);
-        val = reader.ReadToEnd().Split(':')[1];
-        reader.Close();
 
+#if UNITY_IOS || UNITY_EDITOR
+        StreamReader reader = new StreamReader(path);
+        val = reader.ReadToEnd();
+        reader.Close();
+#endif
+
+#if UNITY_ANDROID
+        val = "";
+        path = Application.streamingAssetsPath + "/configAR.txt";
+
+        StartCoroutine(WebRequest(path, returnValue =>
+        {
+            if (val != null)
+            {
+                val = returnValue;
+                val = val.Split(':')[1];
+                val = val.Replace(" ", "");
+                val = val.Replace("\n", "");
+                if (o.GetType() == typeof(AssetBundleDownloader))
+                {
+                    var abd = (AssetBundleDownloader)o;
+                    abd.StartCoroutine(
+                        abd.DownloadFile(filepath, val, m_isSceneAssetBundle));
+                }
+                else if (o.GetType() == typeof(ReadFilesFromDropBox))
+                {
+                    var rfdb = (ReadFilesFromDropBox)o;
+                    rfdb.ReadFiles(val);
+                }
+            }
+        }));
+        return "";
+#else
+        val = val.Split(':')[1];
         val = val.Replace(" ", "");
         val = val.Replace("\n", "");
-
-        Debug.Log(val);
-
         return val;
+#endif
+
+    }
+
+    IEnumerator WebRequest(string path, System.Action<string> callback = null)
+    {
+        var val = "";
+        var url = path;
+#if UNITY_EDITOR
+        url = "file://" + path;//Path.Combine("file://", path);
+#endif
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.isNetworkError)
+            {
+                val = "error " + webRequest.error;
+            }
+            else
+            {
+                //Debug.Log(webRequest.downloadHandler);
+                val = webRequest.downloadHandler.text;
+                callback(val);
+            }
+        }
     }
 }
 

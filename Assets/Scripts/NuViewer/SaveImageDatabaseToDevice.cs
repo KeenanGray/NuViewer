@@ -17,8 +17,6 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
         GetComponent<Button>().onClick.AddListener(ListVuforiaComponents);
         OpenGalleryBtn = GameObject.Find("OpenGalleryBtn").GetComponent<Button>();
         OpenGalleryBtn.onClick.AddListener(OpenGallery);
-        OpenGalleryBtn.gameObject.SetActive(false);
-
     }
 
     void ListVuforiaComponents()
@@ -74,22 +72,33 @@ public class SaveImageDatabaseToDevice : MonoBehaviour
 
     IEnumerator SaveImages(Texture2D t)
     {
-        Debug.Log("Saving texure " + t.name);
+        var datetime = System.DateTime.Now;
+        string time = datetime.ToString("dd-mm-yyyy");
+        var name = t.name + time + ".png";
+        Debug.Log("Saving texure " + name);
+
         try
         {
-            NativeGallery.SaveImageToGallery(t.EncodeToPNG(), "ImageTargets", "Image.png", null);
+            NativeGallery.SaveImageToGallery(t.EncodeToPNG(), "Camera", name, null);
         }
         catch (Exception e)
         {
             Debug.Log(e);
-            var rt = RenderTexture.GetTemporary(t.width,t.height,0);
+            var rt = RenderTexture.GetTemporary(t.width, t.height, 0);
             Graphics.Blit(t, rt);
             RenderTexture.active = rt;
             Texture2D destination_texture = new Texture2D(t.width, t.height);
             destination_texture.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
             destination_texture.Apply();
 
-            NativeGallery.SaveImageToGallery(destination_texture.EncodeToPNG(), "ImageTargets", "Image.png", null);
+            byte[] final;
+#if UNITY_ANDROID
+            final = destination_texture.EncodeToPNG();
+#else
+            final = destination_texture.EncodeToPNG();
+#endif
+
+            NativeGallery.SaveImageToGallery(final, "Camera", name, null);
 
         }
         yield break;

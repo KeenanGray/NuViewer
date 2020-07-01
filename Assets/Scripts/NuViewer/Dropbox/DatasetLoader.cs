@@ -26,7 +26,6 @@ public class DatasetLoader : MonoBehaviour
     // This function is called when vuforia gives the started callback
     void OnVuforiaStarted()
     {
-#if !UNITY_ANDROID || UNITY_EDITOR
         // Request an ImageTracker instance from the TrackerManager.
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
 
@@ -39,7 +38,6 @@ public class DatasetLoader : MonoBehaviour
 
         GetFileByPlatform("VuforiaMars_Images.xml");
         GetFileByPlatform("AR-Games-2020.xml");
-#endif
     }
 
     void GetFileByPlatform(string fileName)
@@ -54,7 +52,7 @@ public class DatasetLoader : MonoBehaviour
 		path = Application.persistentDataPath + "/"+fileName;
 #elif UNITY_ANDROID && !UNITY_EDITOR
 ///storage/emulated/0/Android/data/com.KeenanGray.VuforiaLoader/files/AR-Games-2020.xml 
-		path = Application.persistentDataPath + fileName;
+		path = Application.persistentDataPath + "/"+fileName;
 #else
         path = Application.persistentDataPath + "/" + fileName;
 #endif
@@ -63,7 +61,7 @@ public class DatasetLoader : MonoBehaviour
 
         if (status)
         {
-//            Debug.Log("Dataset Loaded");
+            Debug.Log("Dataset Loaded");
         }
         else
         {
@@ -75,7 +73,6 @@ public class DatasetLoader : MonoBehaviour
     private bool LoadDataSet(string dataSetPath, VuforiaUnity.StorageType storageType)
     {
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-
 
         // Check if the data set exists at the given path.
         if (!DataSet.Exists(dataSetPath, storageType))
