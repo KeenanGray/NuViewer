@@ -236,6 +236,19 @@ public class AssetBundleDownloader : MonoBehaviour
         val = val.Split(':')[1];
         val = val.Replace(" ", "");
         val = val.Replace("\n", "");
+
+        if (o.GetType() == typeof(AssetBundleDownloader))
+        {
+            var abd = (AssetBundleDownloader)o;
+            abd.StartCoroutine(
+                abd.DownloadFile(filepath, val, m_isSceneAssetBundle));
+        }
+        else if (o.GetType() == typeof(ReadFilesFromDropBox))
+        {
+            var rfdb = (ReadFilesFromDropBox)o;
+            rfdb.ReadFiles(val);
+        }
+
         return val;
 #endif
 
