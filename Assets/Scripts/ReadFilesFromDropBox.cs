@@ -9,15 +9,23 @@ using System;
 
 public class ReadFilesFromDropBox : MonoBehaviour
 {
+    string bearer;
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder"));
+        ReadFiles();
+    }
+    public void ReadFiles(string bearer = null)
+    {
+        if (bearer == null || bearer == "")
+        {
+            bearer = GameObject.FindObjectOfType<AssetBundleDownloader>().getBearerString(this);
+            return;
+        }
+        StartCoroutine(GetRequest("https://api.dropboxapi.com/2/files/list_folder", bearer));
     }
 
-    string bearer = AssetBundleDownloader.getBearerString();
-
-    IEnumerator GetRequest(string uri)
+    IEnumerator GetRequest(string uri, string bearer)
     {
         WWWForm data = new WWWForm();
         data.AddField("path", "");
@@ -27,17 +35,17 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //   data.AddField("include_non_downloadable_files", "true");
 
         //first download root folder files, xml and .dat - platform independent
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"\"}"));
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"\"}"));
 
-#if UNITY_IOS || UNITY_EDITOR
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/ios\"}"));
-#elif UNITY_ANDROID
-        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", "{\"path\":\"/android\"}"));
+#if UNITY_IOS 
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"/ios\"}"));
+#elif UNITY_ANDROID|| UNITY_EDITOR
+        StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"/android\"}"));
 #endif
         yield break;
     }
 
-    IEnumerator Post(string url, string bodyJsonString)
+    IEnumerator Post(string url, string bearer, string bodyJsonString)
     {
         var request = new UnityWebRequest(url, "POST");
 

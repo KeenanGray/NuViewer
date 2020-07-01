@@ -122,7 +122,8 @@ PlayerSettings:
     16:9: 1
     Others: 1
   bundleVersion: 1.2
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 3571383907967119060, guid: e6601680eeda74cfcacc9ae342417e89, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -241,7 +242,7 @@ PlayerSettings:
   clonedFromGUID: c0afd0d1d80e3634a9dac47e8a0426ea
   templatePackageId: com.unity.template.3d@4.2.8
   templateDefaultScene: Assets/Scenes/SampleScene.unity
-  AndroidTargetArchitectures: 3
+  AndroidTargetArchitectures: 2
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: /Users/keenangray/Docs/AndroidKeystore/ScanUtils_Keystore.keystore

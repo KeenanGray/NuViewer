@@ -14,19 +14,35 @@ public class AssetBundleDownloader : MonoBehaviour
     public StringReference assetName;
     string bearer;
 
+    public string m_path;
+    public bool m_isSceneAssetBundle;
+
+    void Awake()
+    {
+
+    }
+
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
         var path = "{\"path\":\"" + filename + "\"}";
-        GameObject.FindObjectOfType<AssetBundleDownloader>().StartCoroutine(
-            GameObject.FindObjectOfType<AssetBundleDownloader>().DownloadFile(path, isSceneAssetBundle));
+        var abd = GameObject.FindObjectOfType<AssetBundleDownloader>();
+        abd.m_path = path;
+        abd.m_isSceneAssetBundle = isSceneAssetBundle;
+
+        abd.StartCoroutine(
+           abd.DownloadFile(path, null, isSceneAssetBundle));
     }
 
     int FileSize;
-    IEnumerator DownloadFile(string path, bool isSceneAssetBundle = false)
+    IEnumerator DownloadFile(string path, string bearer = null, bool isSceneAssetBundle = false)
     {
-        yield return GetFileSize(path);
+        //yield return GetFileSize(path);
 
-        bearer = getBearerString();
+        if (bearer == null || bearer == "")
+        {
+            bearer = getBearerString(this);
+            yield break;
+        }
 
         var request = new UnityWebRequest("https://content.dropboxapi.com/2/files/download", "POST");
 
@@ -96,25 +112,26 @@ public class AssetBundleDownloader : MonoBehaviour
         }
     }
 
-    IEnumerator GetFileSize(string path)
-    {
-        var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
+    /*
+        IEnumerator GetFileSize(string path)
+        {
+            var request = new UnityWebRequest("https://api.dropboxapi.com/2/files/get_metadata", "POST");
 
-        bearer = getBearerString();
-        request.SetRequestHeader("Authorization", "Bearer " + bearer);
+            bearer = getBearerString(this);
+            request.SetRequestHeader("Authorization", "Bearer " + bearer);
 
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
-        request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(path);
+            request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-        yield return request.SendWebRequest();
-        var res = request.downloadHandler.text;
-        //parse the json
-        var N = SimpleJSON.JSON.Parse(res);
-        FileSize = int.Parse(N["size"].Value);
-    }
-
+            yield return request.SendWebRequest();
+            var res = request.downloadHandler.text;
+            //parse the json
+            var N = SimpleJSON.JSON.Parse(res);
+            FileSize = int.Parse(N["size"].Value);
+        }
+    */
     string BundleName;
     Dictionary<string, AsyncOperation> SceneLoadDict;
     IEnumerator LoadSceneFromAssetBundle(string path, Stream stream)
@@ -132,8 +149,11 @@ public class AssetBundleDownloader : MonoBehaviour
 
                 var slider = GameObject.Find("Slider").GetComponent<Slider>();
 
+                Debug.Log("1");
+
                 var async = SceneManager.LoadSceneAsync("XRRig", LoadSceneMode.Additive);
 
+                Debug.Log("2");
 
                 slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(160, 184, 70, 255);
                 async.allowSceneActivation = false;
@@ -144,27 +164,32 @@ public class AssetBundleDownloader : MonoBehaviour
                     yield return null;
                 }
                 slider.value = 1.0f;
+            
                 yield return StartCoroutine(LoadDevice());
 
                 async.allowSceneActivation = true;
 
-
                 //Set the name of the asset bundle so we can unload it when the scene closes
                 assetName.Value = ab.name;
 
-                async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
+             //   var async2 = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                Debug.Log("3");
                 slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
-                while (async.progress < 0.9f)
+
+/*
+                while (async2.progress < 0.9f)
                 {
-                    slider.value = async.progress;
+                    slider.value = async2.progress;
                     yield return null;
                 }
                 slider.value = 1.0f;
+*/
 
+                Debug.Log("4");
+                SceneManager.LoadScene("XRRig");
+                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+               // SceneManager.UnloadSceneAsync("MenuScene");
 
-
-                SceneManager.UnloadSceneAsync("MenuScene");
             }
             else
             {
@@ -182,28 +207,59 @@ public class AssetBundleDownloader : MonoBehaviour
         yield return null;
         StartCoroutine("enableXR");
         yield return new WaitForSeconds(1.0f);
+        Debug.Log("Coroutine Finished");
         yield break;
     }
 
-    public static string getBearerString()
+    public string getBearerString(object o)
     {
         var val = "";
         var path = "";
 #if UNITY_EDITOR
         path = "Assets/configVR.txt";
 #else
-    path = Application.streamingAssetsPath + "/configVR.txt";
+        path = Application.streamingAssetsPath + "/configVR.txt";
 #endif
-        StreamReader reader = new StreamReader(path);
-        val = reader.ReadToEnd().Split(':')[1];
-        reader.Close();
 
+#if UNITY_IOS || UNITY_EDITOR
+        StreamReader reader = new StreamReader(path);
+        val = reader.ReadToEnd();
+        reader.Close();
+#endif
+
+#if UNITY_ANDROID
+        val = "";
+        path = Application.streamingAssetsPath + "/configVR.txt";
+
+        StartCoroutine(WebRequest(path, returnValue =>
+        {
+            if (val != null)
+            {
+                val = returnValue;
+                val = val.Split(':')[1];
+                val = val.Replace(" ", "");
+                val = val.Replace("\n", "");
+                if (o.GetType() == typeof(AssetBundleDownloader))
+                {
+                    var abd = (AssetBundleDownloader)o;
+                    abd.StartCoroutine(
+                        abd.DownloadFile(abd.m_path, val, abd.m_isSceneAssetBundle));
+                }
+                else if (o.GetType() == typeof(ReadFilesFromDropBox))
+                {
+                    var rfdb = (ReadFilesFromDropBox)o;
+                    rfdb.ReadFiles(val);
+                }
+            }
+        }));
+        return "";
+#else
+        val = val.Split(':')[1];
         val = val.Replace(" ", "");
         val = val.Replace("\n", "");
-
-        Debug.Log(val);
-
         return val;
+#endif
+
     }
 
     IEnumerator enableXR()
@@ -219,6 +275,32 @@ public class AssetBundleDownloader : MonoBehaviour
                 yield return null;
         }
     }
+
+    IEnumerator WebRequest(string path, System.Action<string> callback = null)
+    {
+        var val = "";
+        var url = path;
+#if UNITY_EDITOR
+        url = "file://" + path;//Path.Combine("file://", path);
+#endif
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.isNetworkError)
+            {
+                val = "error " + webRequest.error;
+            }
+            else
+            {
+                //Debug.Log(webRequest.downloadHandler);
+                val = webRequest.downloadHandler.text;
+                callback(val);
+            }
+        }
+    }
+
+
 }
 
 
