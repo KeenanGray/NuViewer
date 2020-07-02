@@ -1,2 +1,2 @@
 # NuViewerAR
-Viewer for Unity Vuforia projects
+Viewer for Google Cardboard projects
