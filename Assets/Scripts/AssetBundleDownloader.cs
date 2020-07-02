@@ -183,7 +183,7 @@ public class AssetBundleDownloader : MonoBehaviour
                 Debug.Log("4");
                 StopAllCoroutines();
                 SceneManager.LoadScene("XRRig");
-                //SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
                 // SceneManager.UnloadSceneAsync("MenuScene");
 
             }

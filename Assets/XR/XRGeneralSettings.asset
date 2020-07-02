@@ -16,6 +16,23 @@ MonoBehaviour:
   m_AutomaticLoading: 0
   m_AutomaticRunning: 0
   m_Loaders:
+  - {fileID: 0}
+--- !u!114 &-5508429459548996512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c3631f5e58749a59194e0cf6baf6d5, type: 3}
+  m_Name: Android Providers
+  m_EditorClassIdentifier: 
+  m_RequiresSettingsUpdate: 0
+  m_AutomaticLoading: 0
+  m_AutomaticRunning: 0
+  m_Loaders:
   - {fileID: 11400000, guid: 8f520fec5d1054162834e40a7a4bbb25, type: 2}
 --- !u!114 &-4671272521682715965
 MonoBehaviour:
@@ -62,7 +79,7 @@ MonoBehaviour:
   Keys: 0400000007000000
   Values:
   - {fileID: 1507534158586315091}
-  - {fileID: 3571383907967119060}
+  - {fileID: 7114683059519691688}
 --- !u!114 &195921504898414614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +124,7 @@ MonoBehaviour:
   m_AutomaticLoading: 0
   m_AutomaticRunning: 0
   m_Loaders:
-  - {fileID: 11400000, guid: 8f520fec5d1054162834e40a7a4bbb25, type: 2}
+  - {fileID: 0}
 --- !u!114 &2892859754996698215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,6 +152,20 @@ MonoBehaviour:
   m_Name: Android Settings
   m_EditorClassIdentifier: 
   m_LoaderManagerInstance: {fileID: -5962215910388900837}
+  m_InitManagerOnStart: 0
+--- !u!114 &7114683059519691688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d236b7d11115f2143951f1e14045df39, type: 3}
+  m_Name: Android Settings
+  m_EditorClassIdentifier: 
+  m_LoaderManagerInstance: {fileID: -5508429459548996512}
   m_InitManagerOnStart: 0
 --- !u!114 &7214640592142060574
 MonoBehaviour:
@@ -168,4 +199,4 @@ MonoBehaviour:
   m_AutomaticLoading: 0
   m_AutomaticRunning: 0
   m_Loaders:
-  - {fileID: 11400000, guid: 8f520fec5d1054162834e40a7a4bbb25, type: 2}
+  - {fileID: 0}

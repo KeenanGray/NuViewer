@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Google.XR.Cardboard;
+using UnityEngine.XR;
+using UnityEngine.XR.Management;
 
 namespace KeenanXR
 {
     public class CardboardCanvasControls : MonoBehaviour
     {
-         void Awake() {
-            XRManager.EnableAllXR();
-        }
         public StringReference abName;
         // Start is called before the first frame update
         void Start()
         {
+                        XRManager.EnableAllXR();
+
             // Configures the app to not shut down the screen and sets the brightness to maximum.
             // Brightness control is expected to work only in iOS, see:
             // https://docs.unity3d.com/ScriptReference/Screen-brightness.html.
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Screen.brightness = 1.0f;
 
-            // Checks if the device parameters are stored and scans them if not.
-            if (!Api.HasDeviceParams())
-            {
-                Api.ScanDeviceParams();
-            }
-            
+            /*
+                        // Checks if the device parameters are stored and scans them if not.
+                        if (!Api.HasDeviceParams())
+                        {
+                            Api.ScanDeviceParams();
+                        }
+            */
         }
 
         // Update is called once per frame

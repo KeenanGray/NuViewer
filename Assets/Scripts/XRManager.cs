@@ -9,7 +9,7 @@ using UnityEngine.XR.Management;
 
 namespace KeenanXR
 {
-    public static class XRManager
+    public class XRManager : MonoBehaviour
     {
         static List<XRDisplaySubsystemDescriptor> displaysDescs = new List<XRDisplaySubsystemDescriptor>();
         static List<XRDisplaySubsystem> displays = new List<XRDisplaySubsystem>();
@@ -65,10 +65,21 @@ namespace KeenanXR
 
         public static void EnableAllXR()
         {
+            var go = GameObject.FindObjectOfType<XRManager>();
+            go.StartCoroutine(go.EnableXR());
+        }
+
+        public IEnumerator EnableXR()
+        {
+//            XRGeneralSettings.Instance.Manager.InitializeLoader();
+            while (XRGeneralSettings.Instance == null)
+            {
+                Debug.Log("no xr settings");
+                yield return null;
+            }
             XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
-            XRGeneralSettings.Instance.Manager.StartSubsystems();
-            
-#if UNITY_IOS
+            //   XRGeneralSettings.Instance.Manager.StartSubsystems();
+
             displays.Clear();
             SubsystemManager.GetInstances(displays);
             foreach (var displaySubsystem in displays)
@@ -79,13 +90,16 @@ namespace KeenanXR
                     break;
                 }
             }
-            if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
+            while (!XRGeneralSettings.Instance.Manager.isInitializationComplete)
             {
-                XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
-                XRGeneralSettings.Instance.Manager.StartSubsystems();
+                Debug.Log("initing system");
+                yield return null;
             }
-#endif
+            Debug.Log("Starting sytem");
+            XRGeneralSettings.Instance.Manager.StartSubsystems();
+            yield break;
 
         }
+
     }
 }
