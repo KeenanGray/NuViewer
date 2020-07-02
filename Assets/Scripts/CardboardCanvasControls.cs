@@ -8,6 +8,9 @@ namespace KeenanXR
 {
     public class CardboardCanvasControls : MonoBehaviour
     {
+         void Awake() {
+            XRManager.EnableAllXR();
+        }
         public StringReference abName;
         // Start is called before the first frame update
         void Start()
@@ -23,6 +26,7 @@ namespace KeenanXR
             {
                 Api.ScanDeviceParams();
             }
+            
         }
 
         // Update is called once per frame

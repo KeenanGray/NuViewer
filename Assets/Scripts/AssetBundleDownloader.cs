@@ -17,11 +17,6 @@ public class AssetBundleDownloader : MonoBehaviour
     public string m_path;
     public bool m_isSceneAssetBundle;
 
-    void Awake()
-    {
-
-    }
-
     public static void DownloadFileFromDropBox(string filename, bool isSceneAssetBundle = false)
     {
         var path = "{\"path\":\"" + filename + "\"}";
@@ -164,7 +159,7 @@ public class AssetBundleDownloader : MonoBehaviour
                     yield return null;
                 }
                 slider.value = 1.0f;
-            
+
                 yield return StartCoroutine(LoadDevice());
 
                 async.allowSceneActivation = true;
@@ -172,23 +167,24 @@ public class AssetBundleDownloader : MonoBehaviour
                 //Set the name of the asset bundle so we can unload it when the scene closes
                 assetName.Value = ab.name;
 
-             //   var async2 = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                //   var async2 = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
                 Debug.Log("3");
                 slider.transform.Find("Fill Area").GetComponentInChildren<UnityEngine.UI.Image>().color = (Color)new Color32(195, 214, 100, 255);
 
-/*
-                while (async2.progress < 0.9f)
-                {
-                    slider.value = async2.progress;
-                    yield return null;
-                }
-                slider.value = 1.0f;
-*/
+                /*
+                                while (async2.progress < 0.9f)
+                                {
+                                    slider.value = async2.progress;
+                                    yield return null;
+                                }
+                                slider.value = 1.0f;
+                */
 
                 Debug.Log("4");
+                StopAllCoroutines();
                 SceneManager.LoadScene("XRRig");
-                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-               // SceneManager.UnloadSceneAsync("MenuScene");
+                //SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                // SceneManager.UnloadSceneAsync("MenuScene");
 
             }
             else
@@ -298,6 +294,11 @@ public class AssetBundleDownloader : MonoBehaviour
                 callback(val);
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("destroyed " + this.name);
     }
 
 

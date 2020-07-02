@@ -119,6 +119,10 @@ public class ReadFilesFromDropBox : MonoBehaviour
         return result;
     }
 
+    private void OnDestroy() {
+        Debug.Log("destroyed " + this.name);
+    }
+
     /*
       handler for downloading and loading an asset bundle when a button is clicked.
   */
