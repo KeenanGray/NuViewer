@@ -10,7 +10,7 @@ public class ReturnToStart : MonoBehaviour
     // Start is called before the first frame update
     public void SetInitialPosition(Transform t)
     {
-        pos = t.position;
+        pos = t.localPosition;
     }
 
     // Update is called once per frame
@@ -22,9 +22,9 @@ public class ReturnToStart : MonoBehaviour
             SetInitialPosition(transform);
         }
 
-        if (transform.localPosition.y < -5.0f)
+        if (transform.localPosition.y < -15.0f)
         {
-            transform.position = pos;
+            transform.localPosition = pos;
         }
     }
 }
