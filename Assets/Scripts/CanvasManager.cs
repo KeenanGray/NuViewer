@@ -13,13 +13,15 @@ public class CanvasManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        StartCoroutine("disableXR");
-
         SelectionScreen = transform.GetChild(0);
         LoadingScreen = transform.GetChild(1);
 
         LoadingScreen.GetComponent<Canvas>().enabled = false;
 
+    }
+    void Start()
+    {
+        StartCoroutine("disableXR");
     }
 
     IEnumerator disableXR()

@@ -42,25 +42,8 @@ namespace KeenanXR
 
         public static void DisableAllXR()
         {
-
-#if UNITY_IOS
-            displays.Clear();
-            SubsystemManager.GetInstances(displays);
-            foreach (var displaySubsystem in displays)
-            {
-                if (displaySubsystem.running)
-                {
-                    displaySubsystem.Stop();
-                    break;
-                }
-            }
-            if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
-            {
-
-                XRGeneralSettings.Instance.Manager.DeinitializeLoader();
-                XRGeneralSettings.Instance.Manager.StopSubsystems();
-            }
-#endif
+            var go = GameObject.FindObjectOfType<XRManager>();
+            go.StartCoroutine(go.DisableXR());
         }
 
         public static void EnableAllXR()
@@ -71,7 +54,7 @@ namespace KeenanXR
 
         public IEnumerator EnableXR()
         {
-//            XRGeneralSettings.Instance.Manager.InitializeLoader();
+            //            XRGeneralSettings.Instance.Manager.InitializeLoader();
             while (XRGeneralSettings.Instance == null)
             {
                 Debug.Log("no xr settings");
@@ -79,17 +62,18 @@ namespace KeenanXR
             }
             XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
             //   XRGeneralSettings.Instance.Manager.StartSubsystems();
-
-            displays.Clear();
-            SubsystemManager.GetInstances(displays);
-            foreach (var displaySubsystem in displays)
-            {
-                if (!displaySubsystem.running)
-                {
-                    displaySubsystem.Start();
-                    break;
-                }
-            }
+            /*
+                        displays.Clear();
+                        SubsystemManager.GetInstances(displays);
+                        foreach (var displaySubsystem in displays)
+                        {
+                            if (!displaySubsystem.running)
+                            {
+                                displaySubsystem.Start();
+                                break;
+                            }
+                        }
+                        */
             while (!XRGeneralSettings.Instance.Manager.isInitializationComplete)
             {
                 Debug.Log("initing system");
@@ -100,6 +84,37 @@ namespace KeenanXR
             yield break;
 
         }
+        IEnumerator DisableXR()
+        {
+            while (XRGeneralSettings.Instance == null)
+            {
+                Debug.Log("no xr settings");
+                yield return null;
+            }
+            /*
+            displays.Clear();
+            SubsystemManager.GetInstances(displays);
+            foreach (var displaySubsystem in displays)
+            {
+                if (displaySubsystem.running)
+                {
+                    displaySubsystem.Stop();
+                    break;
+                }
+            }*/
 
+            while (!XRGeneralSettings.Instance.Manager.isInitializationComplete)
+            {
+                Debug.Log("deiniting system");
+                yield return null;
+            }
+            if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
+            {
+
+                XRGeneralSettings.Instance.Manager.DeinitializeLoader();
+                XRGeneralSettings.Instance.Manager.StopSubsystems();
+            }
+            yield break;
+        }
     }
 }

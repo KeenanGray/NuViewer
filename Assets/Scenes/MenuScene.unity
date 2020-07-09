@@ -1461,7 +1461,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 171
+  m_fontSize: 170.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3045,6 +3045,8 @@ MonoBehaviour:
     UseConstant: 0
     ConstantValue: 
     Variable: {fileID: 11400000, guid: 933e5bfa906624ac183de18efb4e5a27, type: 2}
+  m_path: 
+  m_isSceneAssetBundle: 0
 --- !u!4 &2055914980
 Transform:
   m_ObjectHideFlags: 0

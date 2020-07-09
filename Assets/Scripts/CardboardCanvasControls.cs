@@ -14,7 +14,7 @@ namespace KeenanXR
         // Start is called before the first frame update
         void Start()
         {
-                        XRManager.EnableAllXR();
+            XRManager.EnableAllXR();
 
             // Configures the app to not shut down the screen and sets the brightness to maximum.
             // Brightness control is expected to work only in iOS, see:
@@ -22,13 +22,13 @@ namespace KeenanXR
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Screen.brightness = 1.0f;
 
-            /*
-                        // Checks if the device parameters are stored and scans them if not.
-                        if (!Api.HasDeviceParams())
-                        {
-                            Api.ScanDeviceParams();
-                        }
-            */
+#if UNITY_IOS
+            // Checks if the device parameters are stored and scans them if not.
+            if (!Api.HasDeviceParams())
+            {
+                Api.ScanDeviceParams();
+            }
+#endif
         }
 
         // Update is called once per frame
