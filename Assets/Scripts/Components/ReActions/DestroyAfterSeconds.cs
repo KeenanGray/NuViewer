@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class DestroyAfterSeconds : MonoBehaviour
 {
-   // public float delay;
+    // public float delay;
 
-    bool hasObjectLoaded = false;
     void Update()
     {
-        if (GameObject.FindObjectOfType<GameManager>().hasGameStarted.Value && !hasObjectLoaded)
-        {
-            hasObjectLoaded = true;
-        }
     }
 
     public void Activate(float delay)

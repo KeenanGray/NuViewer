@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class InstantiateObject : MonoBehaviour
 {
-    public BoolReference hasGameStarted;
     public GameObject go;
-
+    public Vector3 offset;
     public void Activate()
     {
-        if (hasGameStarted.Value)
-        {
-            Instantiate(go,transform);
-        }
+       var ngo =  Instantiate(go, transform);
+        ngo.transform.localPosition = offset;
     }
 }

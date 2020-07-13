@@ -9,7 +9,6 @@ public class OnGaze : MonoBehaviour
     public UnityEvent whileGazedOn;
     public UnityEvent onGazeEnded;
 
-
     void Awake()
     {
         GazeSelect.GazeChangedCallback += GazedBegin;

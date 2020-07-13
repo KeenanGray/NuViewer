@@ -6,14 +6,9 @@ using UnityEngine.Events;
 public class OnEnabled : MonoBehaviour
 {
     public UnityEvent onEnable;
-    bool hasObjectLoaded = false;
-    void Update()
+    void OnEnable()
     {
-        if (GameObject.FindObjectOfType<GameManager>().hasGameStarted.Value && !hasObjectLoaded)
-        {
             Debug.Log("Enabled");
             onEnable.Invoke();
-            hasObjectLoaded = true;
-        }
     }
 }

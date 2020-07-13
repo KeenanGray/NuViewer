@@ -16,15 +16,19 @@ public class ReturnToStart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameObject.FindObjectOfType<GameManager>().hasGameStarted.Value && !hasObjectLoaded)
+        if (transform.localPosition.y < -15.0f)
+        {
+            transform.localPosition = pos;
+        }
+    }
+    
+    void OnEnable()
+    {
+        if (!hasObjectLoaded)
         {
             hasObjectLoaded = true;
             SetInitialPosition(transform);
         }
 
-        if (transform.localPosition.y < -15.0f)
-        {
-            transform.localPosition = pos;
-        }
     }
 }
