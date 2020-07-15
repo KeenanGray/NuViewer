@@ -4,31 +4,18 @@ using UnityEngine;
 
 public class ReturnToStart : MonoBehaviour
 {
-    Vector3 pos;
-    bool hasObjectLoaded = false;
-
+    Vector3 startPos;
+    Vector3 startRot;
     // Start is called before the first frame update
-    public void SetInitialPosition(Transform t)
+    void Awake()
     {
-        pos = t.localPosition;
+        startPos = transform.localPosition;
+        startRot = transform.eulerAngles;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Activate()
     {
-        if (transform.localPosition.y < -15.0f)
-        {
-            transform.localPosition = pos;
-        }
-    }
-    
-    void OnEnable()
-    {
-        if (!hasObjectLoaded)
-        {
-            hasObjectLoaded = true;
-            SetInitialPosition(transform);
-        }
-
+        transform.localPosition=startPos;
+        transform.eulerAngles=startRot;
     }
 }

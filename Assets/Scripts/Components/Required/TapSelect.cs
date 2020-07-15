@@ -15,7 +15,7 @@ public class TapSelect : MonoBehaviour
         Touch[] t = Input.touches;
 
         //#if UnityEditor
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
 
             touches = 1;

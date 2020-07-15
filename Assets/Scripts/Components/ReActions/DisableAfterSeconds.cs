@@ -12,10 +12,10 @@ public class DisableAfterSeconds : MonoBehaviour
 
     public void Activate(float delay)
     {
-        StartCoroutine(DestroyAfterTime(delay));
+        StartCoroutine(DisableAfterTime(delay));
     }
 
-    IEnumerator DestroyAfterTime(float delay)
+    IEnumerator DisableAfterTime(float delay)
     {
         yield return new WaitForSeconds(delay);
         this.gameObject.SetActive(false);

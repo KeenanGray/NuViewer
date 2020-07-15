@@ -11,9 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/StandardUI.unity
     guid: 38697cc087c7c4477bb31bf1f6795aa8
-  - enabled: 1
-    path: Assets/Scenes/EmbeddedSample.unity
-    guid: 9218bb296c00541238479f4748c35ba5
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Ballgame.unity
     guid: d26ca5775310a481b9ce8573094487f9

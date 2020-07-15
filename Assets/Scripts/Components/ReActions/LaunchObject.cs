@@ -13,7 +13,7 @@ public class LaunchObject : MonoBehaviour
     Rigidbody rb;
 
 
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
