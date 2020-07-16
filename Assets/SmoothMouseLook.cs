@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [AddComponentMenu("Camera-Control/Smooth Mouse Look")]
 public class SmoothMouseLook : MonoBehaviour
 {
+#if UNITY_EDITOR
 
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
     public RotationAxes axes = RotationAxes.MouseXAndY;
@@ -152,4 +153,5 @@ public class SmoothMouseLook : MonoBehaviour
         }
         return Mathf.Clamp(angle, min, max);
     }
+#endif
 }
