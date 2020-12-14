@@ -61,8 +61,8 @@ namespace KeenanXR
                 yield return null;
             }
             XRGeneralSettings.Instance.Manager.InitializeLoaderSync();
-            //   XRGeneralSettings.Instance.Manager.StartSubsystems();
-            /*
+               XRGeneralSettings.Instance.Manager.StartSubsystems();
+            
                         displays.Clear();
                         SubsystemManager.GetInstances(displays);
                         foreach (var displaySubsystem in displays)
@@ -73,7 +73,7 @@ namespace KeenanXR
                                 break;
                             }
                         }
-                        */
+                        
             while (!XRGeneralSettings.Instance.Manager.isInitializationComplete)
             {
                 Debug.Log("initing system");
@@ -91,7 +91,7 @@ namespace KeenanXR
                 Debug.Log("no xr settings");
                 yield return null;
             }
-            /*
+            
             displays.Clear();
             SubsystemManager.GetInstances(displays);
             foreach (var displaySubsystem in displays)
@@ -101,7 +101,7 @@ namespace KeenanXR
                     displaySubsystem.Stop();
                     break;
                 }
-            }*/
+            }
 
             while (!XRGeneralSettings.Instance.Manager.isInitializationComplete)
             {
