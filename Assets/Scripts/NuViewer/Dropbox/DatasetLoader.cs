@@ -17,12 +17,6 @@ public class DatasetLoader : MonoBehaviour
         VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     // This function is called when vuforia gives the started callback
     void OnVuforiaStarted()
     {

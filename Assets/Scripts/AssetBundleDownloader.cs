@@ -86,7 +86,7 @@ public class AssetBundleDownloader : MonoBehaviour
             //save the .dat and .xml files 
             if (!isSceneAssetBundle)
             {
-                Debug.Log("saving: " + savePath);
+                //Debug.Log("saving: " + savePath);
                 System.IO.File.WriteAllBytes(savePath, request.downloadHandler.data);
             }
             else //load scene from the webrequest as a datastream (this avoids saving unnecessarily to device)

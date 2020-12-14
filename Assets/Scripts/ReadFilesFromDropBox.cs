@@ -87,7 +87,6 @@ public class ReadFilesFromDropBox : MonoBehaviour
                 {
                     //print out the names of additonal unrecognized files
                     //and download them
-                    Debug.Log(jsn["path_display"].Value);
                     AssetBundleDownloader.DownloadFileFromDropBox(jsn["path_display"].Value, false);
                 }
             }

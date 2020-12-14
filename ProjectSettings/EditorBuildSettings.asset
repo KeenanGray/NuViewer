@@ -15,5 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Ballgame.unity
     guid: d26ca5775310a481b9ce8573094487f9
   m_configObjects:
+    com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 4800b8d8f79904c37859a2a6fd5f07d7,
+      type: 2}
+    com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 73a6e0dd346ea42fd8fdce27d7581c4d,
+      type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: e6601680eeda74cfcacc9ae342417e89,
       type: 2}
