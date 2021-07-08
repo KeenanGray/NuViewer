@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 using System.Text;
 using SimpleJSON;
 using UnityEngine.UI;
-using Vuforia;
 using System;
 
 public class ReadFilesFromDropBox : MonoBehaviour
@@ -40,9 +39,9 @@ public class ReadFilesFromDropBox : MonoBehaviour
         //first download root folder files, xml and .dat - platform independent
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"\"}"));
 
-#if UNITY_IOS 
+#if UNITY_IOS || UNITY_EDITOR
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer,"{\"path\":\"/ios\"}"));
-#elif UNITY_ANDROID || UNITY_EDITOR
+#elif UNITY_ANDROID 
         StartCoroutine(Post("https://api.dropboxapi.com/2/files/list_folder", bearer, "{\"path\":\"/android\"}"));
 #endif
         yield break;

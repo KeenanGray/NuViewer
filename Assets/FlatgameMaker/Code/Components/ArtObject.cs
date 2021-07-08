@@ -5,13 +5,30 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+[ExecuteInEditMode]
 public class ArtObject : MonoBehaviour
 {
 
-    void Start()
+    int instanceID = 0;
+
+#if UNITY_EDITOR
+    void OnValidate()
     {
-        
+        Event e = Event.current;
+
+        if (e != null)
+        {
+            if (e.type == EventType.ExecuteCommand && e.commandName == "Duplicate")
+            {
+                print("Here " + gameObject.name);
+                Material tmp = GetComponent<Renderer>().sharedMaterial;
+                GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Flatgame/StandardShader"));
+                //GetComponent<Renderer>().sharedMaterial.mainTexture = tmp;
+                GetComponent<Renderer>().sharedMaterial.CopyPropertiesFromMaterial(tmp);
+            }
+        }
     }
+#endif
 
 
     public void ResizeFromTexture()
@@ -19,12 +36,12 @@ public class ArtObject : MonoBehaviour
         MeshRenderer renderer = GetComponent<MeshRenderer>();
         Transform transform = renderer.transform;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (renderer.sharedMaterial.mainTexture != null)
-        {            
+        {
             float _height = transform.lossyScale.y;
 
-            Texture2D _tmpTexture = new Texture2D(1,1);
+            Texture2D _tmpTexture = new Texture2D(1, 1);
             byte[] tmpBytes = System.IO.File.ReadAllBytes(AssetDatabase.GetAssetPath(renderer.sharedMaterial.mainTexture));
             _tmpTexture.LoadImage(tmpBytes);
 
@@ -33,17 +50,18 @@ public class ArtObject : MonoBehaviour
             Vector3 _currentScale = transform.localScale;
 
             float parentScale = 1f;
-            if (transform.parent != null) {
+            if (transform.parent != null)
+            {
                 parentScale = transform.parent.lossyScale.x;
             }
-            _currentScale.x = _newWidth / parentScale; 
+            _currentScale.x = _newWidth / parentScale;
 
             _currentScale.x *= renderer.sharedMaterial.mainTextureScale.x;
             _currentScale.y *= renderer.sharedMaterial.mainTextureScale.y;
 
             transform.localScale = _currentScale;
         }
-        #endif
+#endif
     }
 
     public void ResizeToBounds()

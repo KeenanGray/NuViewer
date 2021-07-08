@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class CommonEditorElements: Editor
+public class CommonEditorElements : Editor
 {
     public static void MakePlayerButton(GameObject selected)
     {
@@ -16,16 +16,12 @@ public class CommonEditorElements: Editor
                 int artIndex = selected.transform.GetSiblingIndex();
                 if (player.transform.childCount > 0)
                 {
+                    var tmpTransform = player.transform.parent;
 
-                    GameObject oldPlayerGroup = FlatgameMakerUtils.InstantiateAtPath(FlatgameMaker.groupPrefabPath);
-                    oldPlayerGroup.transform.position = player.transform.position;
-                    oldPlayerGroup.transform.parent = player.transform.parent;
-                    oldPlayerGroup.name = "Old " + player.gameObject.name;
                     foreach (Transform t in player.transform.GetChildren())
                     {
-                        t.parent = oldPlayerGroup.transform;
+                        t.parent = tmpTransform.transform;
                     }
-                    oldPlayerGroup.transform.SetSiblingIndex(player.transform.GetSiblingIndex());
                 }
                 player.transform.SetSiblingIndex(artIndex);
                 player.transform.parent = selected.transform.parent;

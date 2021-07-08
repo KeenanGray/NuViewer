@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Vuforia;
 using System.Linq;
 
 public class DatasetLoader : MonoBehaviour
@@ -14,12 +13,13 @@ public class DatasetLoader : MonoBehaviour
     void Start()
     {
         // Registering call back to know when Vuforia is ready
-        VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
+        //VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
     }
 
     // This function is called when vuforia gives the started callback
     void OnVuforiaStarted()
     {
+        /*
         // Request an ImageTracker instance from the TrackerManager.
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
 
@@ -32,11 +32,12 @@ public class DatasetLoader : MonoBehaviour
 
         GetFileByPlatform("VuforiaMars_Images.xml");
         GetFileByPlatform("AR-Games-2020.xml");
+        */
     }
 
     void GetFileByPlatform(string fileName)
     {
-
+        /*
         // The 'path' string determines the location of xml file
         // For convinence the RealTime.xml is placed in the StreamingAssets folder
         // This file can be downloaded and the relative path will be used accordingly
@@ -61,36 +62,6 @@ public class DatasetLoader : MonoBehaviour
         {
             Debug.Log("Dataset Load Failed " + path);
         }
-    }
-
-    // Load and activate a data set at the given path.
-    private bool LoadDataSet(string dataSetPath, VuforiaUnity.StorageType storageType)
-    {
-        ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-
-        // Check if the data set exists at the given path.
-        if (!DataSet.Exists(dataSetPath, storageType))
-        {
-            Debug.LogError("Data set " + dataSetPath + " does not exist.");
-            return false;
-        }
-
-        // Create a new empty data set.
-        DataSet dataSet = objectTracker.CreateDataSet();
-
-        // Load the data set from the given path.
-        if (!dataSet.Load(dataSetPath, storageType))
-        {
-            Debug.LogError("Failed to load data set " + dataSetPath + ".");
-            return false;
-        }
-
-        // (Optional) Activate the data set.
-        objectTracker.ActivateDataSet(dataSet);
-        objectTracker.Start();
-
-
-        return true;
-    }
-
+        */
+    }    
 }

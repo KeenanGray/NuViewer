@@ -5,8 +5,6 @@ using UnityEditor;
 
 public class GeneralEditor : Editor
 {
-    
-
     public override void OnInspectorGUI()
     {
         GUI.skin = GUIUtils.DefaultSkin;
@@ -22,8 +20,6 @@ public class GeneralEditor : Editor
             MoveInHeirarchy(targetBehaviour.transform, 1);
         }
         GUILayout.EndHorizontal();
-
-
     }
 
     private void MoveInHeirarchy(Transform trans, int delta)

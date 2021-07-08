@@ -29,7 +29,7 @@ public class Area : MonoBehaviour
     {
         get
         {
-            if(areaPlayer == null)
+            if (areaPlayer == null)
             {
                 RecalculatePlayer();
             }
@@ -40,9 +40,17 @@ public class Area : MonoBehaviour
     [FormerlySerializedAs("startSpace")]
     public bool startArea;
 
+
+    void Awake()
+    {
+        bounds.center += new Vector2(transform.position.x, transform.position.y);
+        RecalculateBoundsFromContents();
+    }
+
+
     public void Recalculate(ref int queue)
     {
-        if(gameObject.name != areaName)
+        if (gameObject.name != areaName)
         {
             gameObject.name = areaName;
         }
@@ -52,12 +60,13 @@ public class Area : MonoBehaviour
         {
             currentArt = Array.IndexOf(areaArt, currentTransform);
         }
-        if(currentArt >= areaArt.Length){
+        if (currentArt >= areaArt.Length)
+        {
             currentArt = 0;
             currentTransform = GetCurrentArt();
         }
         MeshRenderer[] renderers = transform.GetComponentsInChildren<MeshRenderer>(true);
-        foreach(MeshRenderer r in renderers)
+        foreach (MeshRenderer r in renderers)
         {
             r.MakeInstanced();
             r.SetRenderQueue(queue);
@@ -114,25 +123,36 @@ public class Area : MonoBehaviour
         src.playOnAwake = true;
     }
 
-    public Transform GetCurrentArt(){
-        if(areaArt.Length <= currentArt) {
+    public Transform GetCurrentArt()
+    {
+        if (areaArt == null)
+        {
+            areaArt = transform.GetChildrenRecursive();
+        }
+        if (areaArt.Length <= currentArt || currentArt < 0)
+        {
             currentArt = 0;
         }
+        if (areaArt.Length <= 0)
+            return null;
         return areaArt[currentArt];
     }
 
-    public bool HasArt(){
-        if(areaArt == null)
+    public bool HasArt()
+    {
+        if (areaArt == null)
         {
             return false;
         }
         return areaArt.Length > 0;
     }
 
-    public void SelectCurrentArt(){
-        #if UNITY_EDITOR
-        Selection.activeTransform = areaArt[currentArt];
-        #endif
+    public void SelectCurrentArt()
+    {
+#if UNITY_EDITOR
+        if (areaArt.Length > 0)
+            Selection.activeTransform = areaArt[currentArt];
+#endif
     }
 
     public bool MoveTo(Transform select)
@@ -142,9 +162,9 @@ public class Area : MonoBehaviour
         {
             currentArt = index;
             currentTransform = select;
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Selection.activeTransform = select;
-            #endif
+#endif
             return true;
         }
         return false;
@@ -169,8 +189,9 @@ public class Area : MonoBehaviour
         Transform startTrans = currentTransform;
         do
         {
-            currentArt ++;
-            if(currentArt >= areaArt.Length){
+            currentArt++;
+            if (currentArt >= areaArt.Length)
+            {
                 currentArt = 0;
             }
             currentTransform = GetCurrentArt();
@@ -182,7 +203,8 @@ public class Area : MonoBehaviour
         SelectCurrentArt();
     }
 
-    public void PreviousArt(){
+    public void PreviousArt()
+    {
         Transform startTrans = currentTransform;
         int startpoint = currentTransform.GetSiblingIndex();
         do
@@ -203,12 +225,14 @@ public class Area : MonoBehaviour
 
     public void AddPlayer()
     {
+#if UNITY_EDITOR
         GameObject newPlayer = FlatgameMakerUtils.InstantiateAtPath(playerPrefabPath);
         newPlayer.name = gameObject.name + " Player";
         newPlayer.transform.parent = transform;
         newPlayer.transform.SetAsFirstSibling();
         newPlayer.transform.localPosition = Vector3.zero;
         areaPlayer = newPlayer.GetComponent<Player>();
+#endif
     }
 
     public void RecalculateBoundsFromContents()
@@ -216,19 +240,19 @@ public class Area : MonoBehaviour
         Transform[] areaObjects = transform.GetChildrenRecursive();
         float minX = transform.position.x;
         float maxX = transform.position.x;
-        float minY = transform.position.y; 
+        float minY = transform.position.y;
         float maxY = transform.position.y;
         Rect newBounds = new Rect(transform.position.x, transform.position.y, 0, 0);
         foreach (Transform t in areaObjects)
         {
             MeshRenderer r = t.GetComponent<MeshRenderer>();
-            if(r != null)
+            if (r != null)
             {
                 Bounds b = r.bounds;
                 newBounds = RectFromBounds(newBounds, b);
             }
             Collider2D c = t.GetComponent<Collider2D>();
-            if(c != null)
+            if (c != null)
             {
                 Bounds b = c.bounds;
                 newBounds = RectFromBounds(newBounds, b);
@@ -243,6 +267,7 @@ public class Area : MonoBehaviour
         r.xMax = b.max.x > r.xMax ? b.max.x : r.xMax;
         r.yMin = b.min.y < r.yMin ? b.min.y : r.yMin;
         r.yMax = b.max.y > r.yMax ? b.max.y : r.yMax;
+
         return r;
     }
 
@@ -251,7 +276,7 @@ public class Area : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(bounds.center, bounds.size);
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(bounds.center, bounds.size - (Vector2.one * 2 * boundsCollisionOffset) );
+        Gizmos.DrawWireCube(transform.position, bounds.size - (Vector2.one * 2 * boundsCollisionOffset));
     }
 
 }

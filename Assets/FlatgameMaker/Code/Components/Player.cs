@@ -39,9 +39,13 @@ public class Player : MonoBehaviour
         var direction = Vector3.zero;
         if (useUnityAxisInput)
         {
+#if UNITY_EDITOR
             direction = new Vector3(
                 Input.GetAxisRaw(horizontalAxis), 
                 Input.GetAxisRaw(verticalAxis) );
+#else
+                direction = GameObject.FindObjectOfType<SingleJoystick>().GetInputDirection();
+#endif
         }
         else
         {
@@ -136,7 +140,7 @@ public class Player : MonoBehaviour
 
     private Vector2 prevPosition;
 
-    private void Awake()
+    private void Start()
     {
         if(flipWithMovement == null)
             flipWithMovement = new FlipWithMovementVariables();

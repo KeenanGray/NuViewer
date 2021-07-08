@@ -12,8 +12,8 @@ EditorBuildSettings:
     path: Assets/Scenes/StandardUI.unity
     guid: 38697cc087c7c4477bb31bf1f6795aa8
   - enabled: 1
-    path: Assets/Scenes/Ballgame.unity
-    guid: d26ca5775310a481b9ce8573094487f9
+    path: Assets/TEST.unity
+    guid: d904f43dfd09a493cac7481f625cca3e
   m_configObjects:
     com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 4800b8d8f79904c37859a2a6fd5f07d7,
       type: 2}

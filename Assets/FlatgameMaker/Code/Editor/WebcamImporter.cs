@@ -21,7 +21,7 @@ public class WebcamImporter : EditorWindow
     Color overlayColour = new Color(1, 1, 1, 0.5f);
     Color brushColour = new Color(1, 1, 1, 0.5f);
     bool drawing;
-    bool dragging;
+    //bool dragging = false;
     string saveName = "";
     bool drawn;
     int webcamCount;
@@ -248,11 +248,11 @@ public class WebcamImporter : EditorWindow
 
             prev = next;
 
-            dragging = true;
+           // dragging = true;
         }
         else
         {
-            dragging = false;
+           // dragging = false;
         }
     }
 

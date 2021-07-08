@@ -53,7 +53,7 @@ public class AnimationEditor : GeneralEditor
         {
             ArtCreation window = CreateInstance<ArtCreation>();
             window.SetCustomParent(anim.transform);
-            window.ShowPopup();
+            window.Show();
         }
         GUILayout.EndHorizontal();
         BaseInspectorGUI();

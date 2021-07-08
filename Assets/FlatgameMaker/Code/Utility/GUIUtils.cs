@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
 public class GUIUtils : MonoBehaviour
 {
     public static string guiArtPath = "Assets/FlatgameMaker/Resources/Art/GUI/";
@@ -14,9 +16,7 @@ public class GUIUtils : MonoBehaviour
         {
             if (defaultSkin == null)
             {
-                #if UNITY_EDITOR
                 defaultSkin = (GUISkin)AssetDatabase.LoadAssetAtPath(guiSkinPath, typeof(GUISkin));
-                #endif
             }
             return defaultSkin;
         }
@@ -87,10 +87,11 @@ public class GUIUtils : MonoBehaviour
         }
     }
 
-    public static bool DropdownButton(string label,bool down, float width = 0)
+    public static bool DropdownButton(string label, bool down, float width = 0)
     {
         GUILayout.BeginVertical(GUI.skin.box);
-        if (width == 0) {
+        if (width == 0)
+        {
             if (GUILayout.Button(DropdownButtonContent(label, down)))
             {
                 down = !down;
@@ -98,7 +99,7 @@ public class GUIUtils : MonoBehaviour
         }
         else
         {
-            if (GUILayout.Button(DropdownButtonContent(label, down),GUILayout.Width(width)))
+            if (GUILayout.Button(DropdownButtonContent(label, down), GUILayout.Width(width)))
             {
                 down = !down;
             }
@@ -113,18 +114,14 @@ public class GUIUtils : MonoBehaviour
 
     static GUIContent DropdownButtonContent(string label, bool down)
     {
-        return new GUIContent(label, down? GetGUITexture("DownArrow"): GetGUITexture("RightArrow"));
+        return new GUIContent(label, down ? GetGUITexture("DownArrow") : GetGUITexture("RightArrow"));
     }
-
     public static Texture2D GetGUITexture(string name)
     {
-        #if UNITY_EDITOR
         return (Texture2D)AssetDatabase.LoadAssetAtPath(guiArtPath + name + ".png", typeof(Texture2D));
-        #endif
-        return null;
+        //return null;
     }
 
-#if UNITY_EDITOR
     public static Color ColorField(string label, Color col)
     {
         GUILayout.BeginHorizontal();
@@ -181,6 +178,6 @@ public class GUIUtils : MonoBehaviour
         GUILayout.EndHorizontal();
         return val;
     }
-#endif
 
 }
+#endif

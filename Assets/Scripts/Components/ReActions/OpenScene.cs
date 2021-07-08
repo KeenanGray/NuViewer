@@ -12,7 +12,7 @@ public class OpenScene : MonoBehaviour
             AssetBundleManager.Unload(abName.Value, 0, true);
 
 
-        Vuforia.VuforiaRuntime.Instance.InitVuforia();
+        //Vuforia.VuforiaRuntime.Instance.InitVuforia();
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(name);
 

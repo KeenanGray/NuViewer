@@ -14,7 +14,7 @@ public class AreaManager : MonoBehaviour
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
             {
                 AreaManager existing = FindObjectOfType<AreaManager>();
                 if (existing != null)
@@ -121,17 +121,17 @@ public class AreaManager : MonoBehaviour
 
     public void Recalculate()
     {
-        if(Camera.main.GetComponent<CameraFollow>() == null)
+        if (Camera.main.GetComponent<CameraFollow>() == null)
         {
             Camera.main.gameObject.AddComponent<CameraFollow>();
         }
         int newCurrent = currentArea;
-        for(int i = 0; i < areas.Count; i++)
+        for (int i = 0; i < areas.Count; i++)
         {
-            if(areas[i] == null)
+            if (areas[i] == null)
             {
                 areas.RemoveAt(i);
-                if(currentArea >= i)
+                if (currentArea >= i)
                 {
                     newCurrent -= 1;
                 }
@@ -144,7 +144,7 @@ public class AreaManager : MonoBehaviour
         }
         Area[] heirarchyAreas = GetComponentsInChildren<Area>();
         int queue = 2000;
-        foreach(Area area in heirarchyAreas)
+        foreach (Area area in heirarchyAreas)
         {
             area.Recalculate(ref queue);
         }
@@ -166,6 +166,7 @@ public class AreaManager : MonoBehaviour
 
     public GameObject NewArea(string name, Vector3 pos, Rect bounds)
     {
+#if UNITY_EDITOR
         GameObject newObject = FlatgameMakerUtils.InstantiateAtPath(areaPrefabPath);
         newObject.name = name;
         newObject.transform.position = pos;
@@ -180,19 +181,20 @@ public class AreaManager : MonoBehaviour
             newArea.startArea = true;
         }
         MoveToArea(areas.Count - 1);
-        #if UNITY_EDITOR
+
         Selection.activeGameObject = newObject;
-        #endif
         return newObject;
+#endif
+        return null;
     }
 
     public Area GetCurrentArea()
     {
-        if(areas.Count == 0)
+        if (areas.Count == 0)
         {
             return null;
         }
-        if(currentArea >= areas.Count)
+        if (currentArea >= areas.Count)
         {
             MoveToArea(areas.Count - 1);
         }
@@ -206,15 +208,15 @@ public class AreaManager : MonoBehaviour
 
     public Vector3 GetNewAreaPosition(Rect newRect)
     {
-        Rect occupiedArea= new Rect(0,0,0,0);
-        foreach(Area s in areas)
+        Rect occupiedArea = new Rect(0, 0, 0, 0);
+        foreach (Area s in areas)
         {
             occupiedArea.xMin = Mathf.Min(s.bounds.xMin, occupiedArea.xMin);
             occupiedArea.xMax = Mathf.Max(s.bounds.xMax, occupiedArea.xMax);
             occupiedArea.yMin = Mathf.Min(s.bounds.yMin, occupiedArea.yMin);
             occupiedArea.yMax = Mathf.Max(s.bounds.yMax, occupiedArea.yMax);
         }
-        int dir = Random.Range(0,4);
+        int dir = Random.Range(0, 4);
         Vector2 pos = Vector2.zero;
         switch (dir)
         {
@@ -236,7 +238,7 @@ public class AreaManager : MonoBehaviour
 
     public bool OverlapsExisting(Rect r)
     {
-        foreach(Area s in areas)
+        foreach (Area s in areas)
         {
             if (r.Overlaps(s.bounds))
             {
@@ -248,36 +250,36 @@ public class AreaManager : MonoBehaviour
 
     public void SelectCurrentArea()
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (areas.Count == 0)
         {
             return;
         }
         Selection.activeGameObject = GetCurrentArea().gameObject;
-        #endif
+#endif
     }
 
     public void MoveTo(Transform selected)
     {
-        if(selected == null)
+        if (selected == null)
         {
             return;
         }
         Area selectedArea = null;
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         selectedArea = selected.GetComponent<Area>();
-        #endif
+#endif
         if (selectedArea != null)
         {
             MoveToArea(selectedArea);
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Selection.activeTransform = selected;
-            #endif
+#endif
             return;
         }
         else
         {
-            foreach(Area s in areas)
+            foreach (Area s in areas)
             {
                 if (s.MoveTo(selected))
                 {
@@ -299,7 +301,8 @@ public class AreaManager : MonoBehaviour
     {
         if (selected >= 0)
         {
-            if (currentArea >= 0 && currentArea < areas.Count){
+            if (currentArea >= 0 && currentArea < areas.Count)
+            {
                 areas[currentArea].AreaPlayer.enabled = false;
             }
             currentArea = selected;
@@ -362,7 +365,8 @@ public class AreaManager : MonoBehaviour
 
     public void PreviousArea()
     {
-        if(currentArea <= 0){
+        if (currentArea <= 0)
+        {
             MoveToArea(areas.Count - 1);
         }
         else
@@ -374,7 +378,7 @@ public class AreaManager : MonoBehaviour
 
     public void NextArea()
     {
-        if(currentArea >= areas.Count-1)
+        if (currentArea >= areas.Count - 1)
         {
             MoveToArea(0);
         }

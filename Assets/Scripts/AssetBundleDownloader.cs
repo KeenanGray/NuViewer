@@ -157,7 +157,7 @@ public class AssetBundleDownloader : MonoBehaviour
                 //set the new active scene so vuforia objects initialize in the right place
                 SceneManager.SetActiveScene(SceneManager.GetSceneByName("StandardUI"));
 
-                Vuforia.VuforiaRuntime.Instance.InitVuforia();
+                //Vuforia.VuforiaRuntime.Instance.InitVuforia();
 
                 //Set the name of the asset bundle so we can unload it when the scene closes
                 assetName.Value = ab.name;

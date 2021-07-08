@@ -16,8 +16,8 @@ public class FlatgameMaker : EditorWindow
     public static string animationPrefabPath = "Assets/FlatgameMaker/Resources/Prefabs/AnimationPrefab/AnimationPrefab.prefab";
     public static string groupPrefabPath = "Assets/FlatgameMaker/Resources/Prefabs/GroupPrefab/GroupPrefab.prefab";
     public static string positionIndicatorPath = "Assets/FlatgameMaker/Resources/Prefabs/PositionIndicator/PositionIndicator.prefab";
-    [SerializeField]
-    bool viewSettings = false;
+    //[SerializeField]
+    //bool viewSettings = false;
     EditorCoroutine activeCoroutine = null;
 
     public void OnHierarchyChange()
@@ -34,7 +34,7 @@ public class FlatgameMaker : EditorWindow
 
     static IEnumerator RecalcImpl()
     {
-        Debug.Log("Recalculating");
+        //        Debug.Log("Recalculating");
         if (AreaManager.Instance != null)
         {
             AreaManager.Instance.Recalculate();
@@ -43,7 +43,7 @@ public class FlatgameMaker : EditorWindow
     }
 
     bool centerSpace = true;
-    bool centerObject= true;
+    bool centerObject = true;
 
     [MenuItem("Flatgame Maker/Flatgame Maker")]
     static void Init()
@@ -61,7 +61,7 @@ public class FlatgameMaker : EditorWindow
     void OnGUI()
     {
         GUI.skin = GUIUtils.DefaultSkin;
-        GUILayout.BeginVertical(GUI.skin.box,GUILayout.ExpandWidth(true));
+        GUILayout.BeginVertical(GUI.skin.box, GUILayout.ExpandWidth(true));
         if (RenderAreaNavigation())
         {
             RenderStartAtCurrentOption();
@@ -94,7 +94,7 @@ public class FlatgameMaker : EditorWindow
     {
         GUILayout.BeginHorizontal();
         GUILayout.Label("Center : ", GUILayout.ExpandWidth(false));
-        centerSpace = GUILayout.Toggle(centerSpace,"Areas ");
+        centerSpace = GUILayout.Toggle(centerSpace, "Areas ");
         if (position.width < 350)
         {
             GUILayout.EndHorizontal();
@@ -110,7 +110,7 @@ public class FlatgameMaker : EditorWindow
 
     private void RenderMoveToButton()
     {
-        if (GUILayout.Button("Navigate to selected object",GUILayout.MaxWidth(position.width - 24)))
+        if (GUILayout.Button("Navigate to selected object", GUILayout.MaxWidth(position.width - 24)))
         {
             Transform selected = Selection.activeTransform;
             AreaManager.Instance.MoveTo(selected);
@@ -177,7 +177,7 @@ public class FlatgameMaker : EditorWindow
             {
                 buttonWidth += 170;
             }
-            if (GUILayout.Button(currentArea.areaName,GUILayout.Width(Mathf.Max(50,buttonWidth))))
+            if (GUILayout.Button(currentArea.areaName, GUILayout.Width(Mathf.Max(50, buttonWidth))))
             {
                 AreaManager.Instance.SelectCurrentArea();
                 EditorApplication.ExecuteMenuItem("Edit/Frame Selected");
@@ -227,18 +227,19 @@ public class FlatgameMaker : EditorWindow
         }
         if (!currentArea.HasArt())
         {
+            currentArea.GetCurrentArt();
             GUILayout.Label("no art in current area");
         }
         else
         {
-            if (GUILayout.Button(currentArea.GetCurrentArt().name,GUILayout.Width(Mathf.Max(50,buttonWidth))))
+            if (GUILayout.Button(currentArea.GetCurrentArt().name, GUILayout.Width(Mathf.Max(50, buttonWidth))))
             {
                 currentArea.SelectCurrentArt();
                 EditorApplication.ExecuteMenuItem("Edit/Frame Selected");
             }
         }
         //add
-        if (GUILayout.Button(new GUIContent("","Add new Object"), GUI.skin.customStyles[5]))
+        if (GUILayout.Button(new GUIContent("", "Add new Object"), GUI.skin.customStyles[5]))
         {
             GenericMenu menu = new GenericMenu();
             menu.AddItem(new GUIContent("art"), false, OnAddObject, "art");
@@ -254,7 +255,8 @@ public class FlatgameMaker : EditorWindow
     private void OnAddObject(object objectType)
     {
         string input = (string)objectType;
-        switch(objectType){
+        switch (objectType)
+        {
             case "art":
                 ShowPopup<ArtCreation>();
                 break;
@@ -277,7 +279,7 @@ public class FlatgameMaker : EditorWindow
         AreaManager.Instance.startAtEditorCurrent = GUILayout.Toggle(AreaManager.Instance.startAtEditorCurrent, "Start in current area(Editor Only)", GUILayout.MaxWidth(position.width - 24));
     }
 
-    public static T ShowPopup<T>() where T: EditorWindow
+    public static T ShowPopup<T>() where T : EditorWindow
     {
         T window = CreateInstance<T>();
         window.Show();
@@ -294,7 +296,7 @@ internal class AudioCreation : EditorWindow
     {
         clip = (AudioClip)EditorGUILayout.ObjectField("Audio File", clip, typeof(AudioClip), false);
         GUI.skin = GUIUtils.DefaultSkin;
-        if(GUILayout.Button("Add As Current Area Song"))
+        if (GUILayout.Button("Add As Current Area Song"))
         {
             AreaManager.Instance.GetCurrentArea().AddMusic(clip);
             this.Close();
@@ -333,18 +335,24 @@ public class ArtCreation : EditorWindow
 
         //img = (Texture2D)EditorGUILayout.ObjectField("Image", img, typeof(Texture2D), false);
         GUI.skin = GUIUtils.DefaultSkin;
-        if(GUILayout.Button("Create From Webcam"))
+        if (GUILayout.Button("Create From Webcam"))
         {
             WebcamImporter web = FlatgameMaker.ShowPopup<WebcamImporter>();
             web.artCreation = this;
         }
-        if(GUILayout.Button("Import From Computer"))
+        if (GUILayout.Button("Import From Computer"))
         {
             string importPath = EditorUtility.OpenFilePanel("Import texture", "", "png");
+
+            if (importPath.LastIndexOf("/") < 0)
+            {
+                return;
+            }
+
             string filename = importPath.Substring(importPath.LastIndexOf("/"));
             if (!AssetDatabase.IsValidFolder("Assets/Art"))
             {
-                AssetDatabase.CreateFolder("Assets","Art");
+                AssetDatabase.CreateFolder("Assets", "Art");
             }
             string newPath = "Assets/Art/" + filename;
             FileUtil.CopyFileOrDirectory(importPath, newPath);
@@ -363,7 +371,7 @@ public class ArtCreation : EditorWindow
         if (Event.current.commandName == "ObjectSelectorClosed")
         {
             img = (Texture2D)EditorGUIUtility.GetObjectPickerObject();
-            if(img != null)
+            if (img != null)
             {
                 CreateArt();
             }
@@ -420,7 +428,7 @@ public class TextCreation : EditorWindow
         GUI.skin = GUIUtils.DefaultSkin;
         GUILayout.Label("Be sure you have imported the Text Mesh Pro Essential Resources.\nGo to \"Window>TextMeshPro>Import Text Mesh Pro Essential Resources\" to do this.", EditorStyles.miniBoldLabel);
         GUILayout.Label("Text To Add:");
-        text = GUILayout.TextArea(text,GUILayout.MinHeight(300));
+        text = GUILayout.TextArea(text, GUILayout.MinHeight(300));
         GUI.skin = null;
         textColor = EditorGUILayout.ColorField("Text Color: ", textColor);
         GUI.skin = GUIUtils.DefaultSkin;
@@ -456,7 +464,7 @@ public class TextCreation : EditorWindow
             Camera sceneCam = SceneView.lastActiveSceneView.camera;
             newText.transform.position = Vector3.Scale(sceneCam.transform.position, new Vector3(1, 1, 0));
             Vector3 relativeScale = new Vector3(1 / parent.lossyScale.x, 1 / parent.lossyScale.y, 1 / parent.lossyScale.z);
-            newText.transform.localScale = Vector3.Scale(Vector3.one * sceneCam.orthographicSize * (1/newTMP.fontSize), relativeScale);
+            newText.transform.localScale = Vector3.Scale(Vector3.one * sceneCam.orthographicSize * (1 / newTMP.fontSize), relativeScale);
             Selection.activeGameObject = newText;
             this.Close();
 
@@ -489,12 +497,12 @@ public class TriggerCreation : EditorWindow
         parent = newParent;
         customParent = true;
     }
-     
+
     void OnGUI()
     {
         GUI.skin = GUIUtils.DefaultSkin;
         colliderType = (ColliderType)EditorGUILayout.EnumPopup("Collider Type", colliderType);
-        triggerType = (TriggerType)EditorGUILayout.EnumPopup("Trigger Type",triggerType);
+        triggerType = (TriggerType)EditorGUILayout.EnumPopup("Trigger Type", triggerType);
         EditorGUILayout.LabelField("Trigger Settings");
         switch (triggerType)
         {
@@ -581,13 +589,13 @@ public class AreaCreation : EditorWindow
         Camera sceneCam = SceneView.lastActiveSceneView.camera;
         newPosition = sceneCam.transform.position;
         newSize = new Vector2(40, 40);
-        boundsRect = new Rect((Vector2)newPosition - (0.5f*newSize), newSize);
+        boundsRect = new Rect((Vector2)newPosition - (0.5f * newSize), newSize);
         if (areaManager.OverlapsExisting(boundsRect))
         {
             newPosition = areaManager.GetNewAreaPosition(boundsRect);
             boundsRect = new Rect((Vector2)newPosition - (0.5f * newSize), newSize);
         }
-        
+
         areaPositionIndicator = FlatgameMakerUtils.InstantiateAtPath(FlatgameMaker.positionIndicatorPath);
         areaPositionIndicator.transform.position = newPosition;
         areaPositionIndicator.transform.GetChild(0).localScale = new Vector3(newSize.x, newSize.y, 1);
@@ -613,7 +621,7 @@ public class AreaCreation : EditorWindow
             GUILayout.Label("Custom Background Texture");
             GUILayout.Label("leave empty for grid paper");
             GUI.skin = null;
-            bgTex = (Texture2D)EditorGUILayout.ObjectField(bgTex, typeof(Texture2D),false, GUILayout.Height(64), GUILayout.Width(64));
+            bgTex = (Texture2D)EditorGUILayout.ObjectField(bgTex, typeof(Texture2D), false, GUILayout.Height(64), GUILayout.Width(64));
             GUI.skin = GUIUtils.DefaultSkin;
         }
         newPosition = GUIUtils.Vector2Field("Area Position", newPosition, 140);
@@ -636,9 +644,10 @@ public class AreaCreation : EditorWindow
         {
             this.Close();
         }
-        if (GUILayout.Button("Create")){
+        if (GUILayout.Button("Create"))
+        {
             boundsRect = new Rect((Vector2)newPosition - (0.5f * newSize), newSize);
-            GameObject newAreaObj = areaManager.NewArea(newName, newPosition,boundsRect);
+            GameObject newAreaObj = areaManager.NewArea(newName, newPosition, boundsRect);
             if (addBackground)
             {
                 GameObject newBackground;
@@ -650,14 +659,14 @@ public class AreaCreation : EditorWindow
                 {
                     newBackground = FlatgameMakerUtils.InstantiateAtPath(FlatgameMaker.customBackgroundPrefabPath);
                     MeshRenderer bgMesh = newBackground.GetComponent<MeshRenderer>();
-                    if(bgMesh != null)
+                    if (bgMesh != null)
                     {
                         bgMesh.sharedMaterial.mainTexture = bgTex;
                     }
                 }
                 newBackground.transform.parent = newAreaObj.transform;
                 ArtObject bgArt = newBackground.GetComponent<ArtObject>();
-                if(bgArt != null)
+                if (bgArt != null)
                 {
                     bgArt.ResizeToBounds(boundsRect);
                 }

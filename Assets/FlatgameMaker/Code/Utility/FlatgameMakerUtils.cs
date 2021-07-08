@@ -9,19 +9,19 @@ public static class FlatgameMakerUtils
 {
     public static string guiArtPath = "Assets/FlatgameMaker/Resources/Art/GUI/";
     public static string guiSkinPath = "Assets/FlatgameMaker/Resources/GUISkin/NewTest.guiskin";
-
+#if UNITY_EDITOR
     public static GameObject InstantiateAtPath(string path)
     {
-        #if UNITY_EDITOR
         GameObject artPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(path, typeof(GameObject));
         return (GameObject)PrefabUtility.InstantiatePrefab(artPrefab);
-        #endif
-        return null;
     }
+#endif
 
-    public static Transform[] GetChildren(this Transform parent){
+    public static Transform[] GetChildren(this Transform parent)
+    {
         List<Transform> children = new List<Transform>();
-        for(int i = 0; i < parent.childCount; i++){
+        for (int i = 0; i < parent.childCount; i++)
+        {
             children.Add(parent.GetChild(i));
         }
         return children.ToArray();
@@ -99,7 +99,7 @@ public static class FlatgameMakerUtils
 
     public static void CalculateName(this Transform transform)
     {
-        if(transform.GetComponent<Player>() != null)
+        if (transform.GetComponent<Player>() != null)
         {
             return;
         }
@@ -109,10 +109,11 @@ public static class FlatgameMakerUtils
         {
             TextMeshPro tmp = transform.GetComponent<TextMeshPro>();
             MeshRenderer mr = transform.GetComponent<MeshRenderer>();
-            if(tmp != null) {
+            if (tmp != null)
+            {
                 name += tmp.text.Substring(0, Mathf.Min(20, tmp.text.Length - 1));
             }
-            else if(mr != null)
+            else if (mr != null)
             {
                 name += mr.sharedMaterial.mainTexture.name;
             }
@@ -136,12 +137,12 @@ public static class FlatgameMakerUtils
             name = (name == "" ? childName + "_" : name + "_") + "Animation";
         }
 
-        if(transform.parent != null && transform.parent.GetComponent<Animation>())
+        if (transform.parent != null && transform.parent.GetComponent<Animation>())
         {
             name = "Frame" + transform.GetSiblingIndex() + 1 + (name == "" ? "" : "_" + name);
         }
 
-        if(name != "" && name != transform.name)
+        if (name != "" && name != transform.name)
         {
             transform.name = name;
         }
