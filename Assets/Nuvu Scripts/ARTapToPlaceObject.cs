@@ -46,9 +46,17 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private void UpdatePlacementIndicator()
     {
+        if (placed)
+        {
+            placementIndicator.GetComponent<MeshRenderer>().enabled = false;
+            return;
+        }
         if (placementPoseIsValid)
         {
             placementIndicator.SetActive(true);
+            //arOrigin.MakeContentAppearAt(placementIndicator.transform, placementPose.position);
+            //arOrigin.MakeContentAppearAt(placementIndicator.transform, Quaternion.Euler(placementPose.rotation.eulerAngles + new Vector3(90, 0, 0)));
+
             placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
         }
         else
